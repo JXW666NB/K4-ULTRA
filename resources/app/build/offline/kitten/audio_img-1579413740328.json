@@ -1,0 +1,84 @@
+{"frames": {
+
+  "sound_close.png":
+  {
+    "frame": {"x":0,"y":0,"w":200,"h":200},
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": {"x":0,"y":0,"w":200,"h":200},
+    "sourceSize": {"w":200,"h":200}
+  },
+  "sound_loading.png":
+  {
+    "frame": {"x":200,"y":0,"w":200,"h":200},
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": {"x":0,"y":0,"w":200,"h":200},
+    "sourceSize": {"w":200,"h":200}
+  },
+  "sound_play.png":
+  {
+    "frame": {"x":400,"y":0,"w":200,"h":200},
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": {"x":0,"y":0,"w":200,"h":200},
+    "sourceSize": {"w":200,"h":200}
+  },
+  "sound_playing.png":
+  {
+    "frame": {"x":600,"y":0,"w":200,"h":200},
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": {"x":0,"y":0,"w":200,"h":200},
+    "sourceSize": {"w":200,"h":200}
+  },
+  "sound_record.png":
+  {
+    "frame": {"x":800,"y":0,"w":200,"h":200},
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": {"x":0,"y":0,"w":200,"h":200},
+    "sourceSize": {"w":200,"h":200}
+  },
+  "sound_record_gray.png":
+  {
+    "frame": {"x":1000,"y":0,"w":200,"h":200},
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": {"x":0,"y":0,"w":200,"h":200},
+    "sourceSize": {"w":200,"h":200}
+  },
+  "sound_sound.png":
+  {
+    "frame": {"x":1200,"y":0,"w":200,"h":200},
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": {"x":0,"y":0,"w":200,"h":200},
+    "sourceSize": {"w":200,"h":200}
+  },
+  "sound_terminate.png":
+  {
+    "frame": {"x":1400,"y":0,"w":200,"h":200},
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": {"x":0,"y":0,"w":200,"h":200},
+    "sourceSize": {"w":200,"h":200}
+  },
+  "sound_ternimate_green.png":
+  {
+    "frame": {"x":1600,"y":0,"w":200,"h":200},
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": {"x":0,"y":0,"w":200,"h":200},
+    "sourceSize": {"w":200,"h":200}
+  }},
+  "meta": {
+    "app": "https://www.codeandweb.com/texturepacker",
+    "version": "1.0",
+    "image": "audio_img-1579413740328.png",
+    "format": "RGBA8888",
+    "size": {"w":1800,"h":200},
+    "scale": "1",
+    "smartupdate": "$TexturePacker:SmartUpdate:756be88cfe9809ea4b7f1f473d529d6f:5f9c7ef21a21ae4e5bbb035f00dd6e25:1c9ed61b81091b6a22e1fa1ba532a62a$"
+  }
+  }

@@ -1,0 +1,22 @@
+{
+  "arduino_firmata": {
+    "version": "10.0.0",
+    "hash": "3504a4a227a64e9f6bb17f723b69a02f",
+    "name": "arduino_firmata=10.0.0.hex"
+  },
+  "microbit_repl": {
+    "version": "1.7.0",
+    "hash": "7a4eb39bf6b0431892336d5716a0c0f5",
+    "name": "microbit_repl=1.7.0.hex"
+  },
+  "weeemake_elfmini": {
+    "version": "2.7.0",
+    "hash": "73728ace5552d8194fe25c50d67f6922",
+    "name": "weeemake_elfmini=2.7.0.hex"
+  },
+  "microbit_serialport": {
+    "version": "1.1.0",
+    "hash": "7161cb3fb0394ff72d34542a09fa6077",
+    "name": "microbit_serialport=1.1.0.hex"
+  }
+}

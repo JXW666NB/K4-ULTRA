@@ -1,0 +1,20 @@
+{"frames": {
+
+  "new_next_icon.svg":
+  {
+    "frame": {"x":0,"y":0,"w":20,"h":20},
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": {"x":0,"y":0,"w":20,"h":20},
+    "sourceSize": {"w":20,"h":20}
+  }},
+  "meta": {
+    "app": "https://www.codeandweb.com/texturepacker",
+    "version": "1.0",
+    "image": "stage_dialog-1576674019214.png",
+    "format": "RGBA8888",
+    "size": {"w":20,"h":20},
+    "scale": "1",
+    "smartupdate": "$TexturePacker:SmartUpdate:34815e05c609b3d3977b9625288f3607:472b06e6991e88fb02478bd745674f5a:095a4c895f1c6aade30c027da2391708$"
+  }
+  }

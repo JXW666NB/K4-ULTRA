@@ -1,0 +1,24 @@
+{
+  "name": "system-api-demo-blink",
+  "version": "1.0.0",
+  "description": "Blink 格式系统API示例 - 演示文件操作和系统信息积木",
+  "author": "K4 Ultra Team",
+  "blink": { "version": "1", "min_engine": "4.0" },
+  "category": {
+    "name": "系统API Blink",
+    "color": "#FF6B35",
+    "icon": "sensing"
+  },
+  "entries": {
+    "blocks": "blocks.json",
+    "runtime": "runtime.js",
+    "generator": "generator.js"
+  },
+  "security": {
+    "level": "warning",
+    "permissions": [
+      { "block": "system_read_file", "description": "读取用户磁盘上的文件" },
+      { "block": "system_write_file", "description": "写入文件到用户磁盘" }
+    ]
+  }
+}

@@ -1,0 +1,41 @@
+# ============================================
+# K4 Ultra .gitignore
+# ============================================
+
+# Backups (all versions, backup files, logs)
+backups/
+*.bak
+*.bom_backup
+debug.log
+.k4_backups/
+
+# Chromium locale packs (55 language files, not project source)
+locales/
+
+# Electron / Chromium runtime binaries
+*.exe
+*.dll
+*.pak
+*.bin
+*.dat
+*.ico
+vk_swiftshader_icd.json
+
+# Node
+node_modules/
+
+# IDE / Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Build artifacts (source maps)
+*.map
+

@@ -1,0 +1,124 @@
+{
+    "platform": "kitten4_desktop",
+    "blockly": {
+        "media_path": "./default_res/media/"
+    },
+    "kn_path": "./offline/",
+    "env": "production",
+    "api_env": "production",
+    "community": "https://shequ.codemao.cn",
+    "home_intl": "https://www.code.game",
+    "debug": "false",
+    "codemao_data": {
+        "url": "https://collection.codemao.cn/report",
+        "route": {
+            "kitten": "kitten",
+            "sysinfo": "sysinfo"
+        }
+    },
+    "pdf": {
+        "cdf_path_for_pdf_bcm": "https://static.codemao.cn/kitten/",
+        "file_type": ".pdf_bcm"
+    },
+    "iframe_white_list": [
+        "https://deepspace-kitten.codemao.cn"
+    ],
+    "sample_project": {
+        "pid": "65edCTyg"
+    },
+    "kitten4": "https://kitten4.codemao.cn/",
+    "player": "https://player.codemao.cn",
+    "coll_kitten": "https://preview-kitten.codemao.cn/",
+    "cdn_buckets": {
+        "static": [
+            {
+                "name": "static",
+                "provider": "qiniu",
+                "region": "hd"
+            },
+            {
+                "name": "static-codemao",
+                "provider": "aliyun",
+                "region": ""
+            },
+            {
+                "name": "static-hn",
+                "provider": "qiniu",
+                "region": "hn"
+            }
+        ],
+        "ocean": [
+            {
+                "name": "ocean",
+                "provider": "qiniu",
+                "region": "hd"
+            },
+            {
+                "name": "ocean-codemao",
+                "provider": "aliyun",
+                "region": ""
+            },
+            {
+                "name": "ocean-hn",
+                "provider": "qiniu",
+                "region": "hn"
+            }
+        ]
+    },
+    "domain": "codemao.cn",
+    "disable_interpreter_try_catch": false,
+    "fps": 60,
+    "home": "https://www.codemao.cn",
+    "feedback": "https://shequ.codemao.cn/community/313058",
+    "nemo": "https://shequ.codemao.cn/community/171374",
+    "help_book": {
+        "en": "https://codemao-guide.yuque.com/bfiekm/rgvvfm",
+        "tw": "https://codemao-guide.yuque.com/bfiekm/rgvvfm",
+        "zh": "https://codemao-guide.yuque.com/bfiekm/rgvvfm",
+        "fr": "https://codemao-guide.yuque.com/bfiekm/rgvvfm"
+    },
+    "help_book_int": {
+        "en": "https://docs.code.game/kitten/en/",
+        "tw": "https://docs.code.game/kitten/",
+        "zh": "https://docs.code.game/kitten/",
+        "fr": "https://docs.code.game/kitten/en/"
+    },
+    "cdn_path": "https://static.codemao.cn/",
+    "bk_kn_path": "https://kn-cdn-codemao.codemao.cn/",
+    "creation_cdn_path": "https://creation.codemao.cn/",
+    "bk_creation_cdn_path": "https://creation-codemao.codemao.cn/",
+    "local_resource_path": "../build/asset/",
+    "local_path": "../build/",
+    "resources": {
+        "default_preview": "https://preview.codemao.cn/default_preview.png",
+        "default_scenes_url": "https://static.codemao.cn/program%2Fide%2F%E7%99%BD%E8%89%B2%E8%83%8C%E6%99%AF.png"
+    },
+    "codemao_data_url": "https://collection.codemao.cn/report/kitten",
+    "bundler": {
+        "cdn_path": "https://static.codemao.cn/codemao-bundler/",
+        "version": "2.7.2",
+        "xp": "编程猫格式工厂setup-v2.7.2-xp.exe",
+        "win32": "编程猫格式工厂setup-v2.7.2-win32.exe"
+    },
+    "kitten": "https://kitten.codemao.cn/",
+    "origin_server": {
+        "port": "5000"
+    },
+    "open_service_api": "https://open-service.codemao.cn",
+    "convert_to_exe_api": "https://autojudge.codemao.cn",
+    "cloud_storage_api": "https://socketcv.codemao.cn",
+    "coll_api": "https://socketcoll.codemao.cn",
+    "wss_cloud_storage_api": "wss://socketcv.codemao.cn:9096",
+    "wss_coll_api": "wss://socketcoll.codemao.cn:8098",
+    "lvmi_service_host": "smart-hardware.codemao.cn",
+    "lvmi_appid": "9108507546113146880bcbae",
+    "api": {
+        "host_community": "https://api.codemao.cn",
+        "host": "https://api.codemao.cn",
+        "port": "443",
+        "pid": "OqMVXvXp"
+    },
+    "creation_api": "https://api-creation.codemao.cn",
+    "eduzone_api": "https://eduzone.codemao.cn",
+    "type": 1
+}

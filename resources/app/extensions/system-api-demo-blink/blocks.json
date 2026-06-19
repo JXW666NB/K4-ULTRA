@@ -1,0 +1,86 @@
+[
+  {
+    "type": "system_read_file",
+    "message0": "读取文件 %1",
+    "args0": [{ "type": "input_value", "name": "PATH", "check": "String" }],
+    "output": "String",
+    "colour": "%{BKY_SENSING_HUE}",
+    "inputsInline": true,
+    "tooltip": "读取指定路径的文件内容"
+  },
+  {
+    "type": "system_write_file",
+    "message0": "写入文件 路径 %1 内容 %2",
+    "args0": [
+      { "type": "input_value", "name": "PATH", "check": "String" },
+      { "type": "input_value", "name": "CONTENT", "check": "String" }
+    ],
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": "%{BKY_SENSING_HUE}",
+    "inputsInline": true,
+    "tooltip": "将内容写入指定文件"
+  },
+  {
+    "type": "system_file_exists",
+    "message0": "文件是否存在 %1",
+    "args0": [{ "type": "input_value", "name": "PATH", "check": "String" }],
+    "output": "Boolean",
+    "colour": "%{BKY_SENSING_HUE}",
+    "inputsInline": true,
+    "tooltip": "检查指定路径是否存在"
+  },
+  {
+    "type": "system_create_dir",
+    "message0": "创建目录 %1",
+    "args0": [{ "type": "input_value", "name": "PATH", "check": "String" }],
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": "%{BKY_SENSING_HUE}",
+    "inputsInline": true,
+    "tooltip": "递归创建目录"
+  },
+  {
+    "type": "system_list_dir",
+    "message0": "列出目录 %1",
+    "args0": [{ "type": "input_value", "name": "PATH", "check": "String" }],
+    "output": "String",
+    "colour": "%{BKY_SENSING_HUE}",
+    "inputsInline": true,
+    "tooltip": "列出目录内容并返回JSON字符串"
+  },
+  {
+    "type": "system_get_os",
+    "message0": "获取操作系统信息",
+    "output": "String",
+    "colour": "%{BKY_SENSING_HUE}",
+    "tooltip": "返回操作系统平台、架构和Node版本"
+  },
+  {
+    "type": "system_open_url",
+    "message0": "打开网址 %1",
+    "args0": [{ "type": "input_value", "name": "URL", "check": "String" }],
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": "%{BKY_SENSING_HUE}",
+    "inputsInline": true,
+    "tooltip": "用系统默认浏览器打开网址"
+  },
+  {
+    "type": "system_get_clipboard",
+    "message0": "获取剪贴板内容",
+    "output": "String",
+    "colour": "%{BKY_SENSING_HUE}",
+    "tooltip": "读取剪贴板文本"
+  },
+  {
+    "type": "system_set_clipboard",
+    "message0": "设置剪贴板为 %1",
+    "args0": [{ "type": "input_value", "name": "TEXT", "check": "String" }],
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": "%{BKY_SENSING_HUE}",
+    "inputsInline": true,
+    "tooltip": "将文本写入剪贴板"
+  }
+]

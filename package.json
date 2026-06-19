@@ -1,0 +1,17 @@
+{
+  "name": "k4-ultra",
+  "version": "1.0.0",
+  "description": "K4 Ultra - 基于 Kitten4 的专业游戏引擎",
+  "main": "main/index.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "node builder/build-exe.js",
+    "build:runtime": "node builder/build-exe.js --runtime"
+  },
+  "author": "K4 Ultra",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "36.5.0",
+    "electron-packager": "^17.1.2"
+  }
+}

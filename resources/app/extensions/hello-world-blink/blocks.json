@@ -1,0 +1,27 @@
+[
+  {
+    "type": "hello_say",
+    "message0": "打招呼 %1",
+    "args0": [
+      { "type": "input_value", "name": "NAME", "check": "String" }
+    ],
+    "output": "String",
+    "colour": "%{BKY_SENSING_HUE}",
+    "inputsInline": true,
+    "tooltip": "向指定对象打招呼"
+  },
+  {
+    "type": "hello_time",
+    "message0": "当前时间戳",
+    "output": "Number",
+    "colour": "%{BKY_SENSING_HUE}",
+    "tooltip": "获取当前时间戳(毫秒)"
+  },
+  {
+    "type": "hello_random_color",
+    "message0": "随机颜色",
+    "output": "String",
+    "colour": "%{BKY_SENSING_HUE}",
+    "tooltip": "生成一个随机十六进制颜色值"
+  }
+]

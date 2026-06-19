@@ -1,0 +1,33 @@
+<style>
+#kitten-loader-wrap {
+  position: absolute; width: 100%; height: 100%; top: 0; left: 0; z-index: 99;
+  background: linear-gradient(135deg, #ffe8d6 0%, #ffd6a5 100%);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  font-family: "Microsoft YaHei", sans-serif;
+}
+.kitten-cat { width: 120px; height: 120px; background: #ff8c42; border-radius: 50% 50% 45% 45%; position: relative; animation: kittenBounce 2s ease-in-out infinite; }
+.kitten-cat::before, .kitten-cat::after { content:''; position: absolute; top: -20px; width: 0; height: 0; border-left: 20px solid transparent; border-right: 20px solid transparent; border-bottom: 40px solid #ff8c42; }
+.kitten-cat::before { left: 15px; transform: rotate(-15deg); }
+.kitten-cat::after { right: 15px; transform: rotate(15deg); }
+.kitten-face { position: absolute; top: 40px; left: 50%; transform: translateX(-50%); }
+.kitten-eye { width: 14px; height: 14px; background: #333; border-radius: 50%; display: inline-block; margin: 0 14px; animation: kittenBlink 4s infinite; }
+.kitten-nose { width: 12px; height: 8px; background: #ff6b6b; border-radius: 50%; margin: 8px auto 0; }
+@keyframes kittenBounce { 0%,100%{transform: translateY(0)} 50%{transform: translateY(-12px)} }
+@keyframes kittenBlink { 0%,90%,100%{transform: scaleY(1)} 95%{transform: scaleY(0.1)} }
+.kitten-title { font-size: 32px; font-weight: 700; color: #ff8c42; margin-top: 32px; }
+.kitten-subtitle { font-size: 14px; color: #c97b4f; margin-top: 8px; }
+.kitten-paws { margin-top: 24px; font-size: 24px; letter-spacing: 4px; color: #ff8c42; animation: kittenPaws 1s infinite; }
+@keyframes kittenPaws { 0%,100%{opacity:0.4} 50%{opacity:1} }
+#offline-text { margin-top: 24px; padding: 8px 16px; background: #ff8c42; color: #fff; border-radius: 20px; cursor: pointer; }
+#offline-text:hover { background: #ff6b1a; }
+</style>
+<div class="kitten-cat">
+  <div class="kitten-face">
+    <span class="kitten-eye"></span><span class="kitten-eye"></span>
+    <div class="kitten-nose"></div>
+  </div>
+</div>
+<div class="kitten-title">K4 ULTRA</div>
+<div class="kitten-subtitle">小猫正在准备创作空间...</div>
+<div class="kitten-paws">🐾 🐾 🐾</div>
+<div id="offline-text" onclick="switch_mode()">离线打开</div>

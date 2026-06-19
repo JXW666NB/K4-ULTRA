@@ -1,0 +1,9 @@
+{
+  "name": "electron_for_kitten4",
+  "version": "4.11.19",
+  "description": "client for kitten 4",
+  "main": "main/index.js",
+  "author": "Codemao",
+  "license": "UNLICENSED",
+  "private": true
+}

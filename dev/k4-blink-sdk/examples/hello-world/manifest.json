@@ -1,0 +1,31 @@
+{
+  "name": "hello-world",
+  "version": "1.1.0",
+  "description": "K4 Blink 扩展示例 - 演示积木/生成器/运行时/安全沙盒",
+  "author": "K4 Ultra Team",
+  "license": "MIT",
+  "blink": {
+    "version": "1",
+    "min_engine": "4.0"
+  },
+  "category": {
+    "name": "Hello扩展",
+    "color": "#FF6B35",
+    "icon": "iconicon_gongju"
+  },
+  "entries": {
+    "blocks": "blocks.json",
+    "runtime": "runtime.js",
+    "generator": "generator.js"
+  },
+  "security": {
+    "level": "warning",
+    "permissions": [
+      {
+        "block": "hello_delete",
+        "description": "模拟删除文件操作（安全沙盒演示）"
+      }
+    ]
+  },
+  "types": ["value", "statement"]
+}
