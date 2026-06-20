@@ -33,6 +33,7 @@
     appearance.secondaryColor = p.secondary;
     appearance.bgColor = p.bg;
     appearance.textColor = p.text;
+    appearance.dataTheme = p.dataTheme || '';
     // Apply data-theme for original Kitten4 theme compatibility
     if (p.dataTheme) {
       document.body.setAttribute('data-theme', p.dataTheme);
@@ -48,7 +49,7 @@
     }
   }
 
-  let selectedPreset = $state('');
+  let selectedPreset = $state(saved.appearance?.dataTheme ? (PRESETS.find(p => p.dataTheme === saved.appearance.dataTheme)?.name || '') : '');
   localeStore.subscribe(v => _lang = v);
 
   const FS = (window as any).FS;
@@ -85,6 +86,7 @@
     glassOpacity: saved.appearance?.glassOpacity ?? 0.15,
     accentGlow: saved.appearance?.accentGlow ?? true,
     textColor: saved.appearance?.textColor ?? '#ffffff',
+    dataTheme: saved.appearance?.dataTheme ?? '',
   });
 
   let editor = $state({
