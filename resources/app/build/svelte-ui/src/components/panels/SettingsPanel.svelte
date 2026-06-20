@@ -140,6 +140,17 @@
   let aboutInfo = $state({ version: 'V0.3', author: 'JXW & K4ULTRA Team', qq: '2123600961', group: '967426331' });
   refreshExtensions();
 
+  function resetToDefaults() {
+    general.autoSave = true; general.smoothZoom = true; general.showFps = false; general.theme = 'ultra';
+    appearance.primaryColor = '#583cdc'; appearance.secondaryColor = '#00b4ff'; appearance.bgColor = '#050508'; appearance.bgImage = ''; appearance.glassMorphism = false; appearance.glassBlur = 12; appearance.glassOpacity = 15; appearance.accentGlow = true; appearance.textColor = '#ffffff'; appearance.dataTheme = 'theme/ultra';
+    editor.fontSize = 14; editor.snapToGrid = true; editor.showCategoryIcons = true; editor.compactMode = false; editor.lineNumbers = true; editor.autoComplete = true;
+    var dz = defaultZone();
+    zones.header = {...dz}; zones.workspace = {...dz}; zones.sidebar = {...dz}; zones.stage = {...dz}; zones.blockly_bg = {...dz};
+    selectedPreset = 'Ultra Purple';
+    document.body.setAttribute('data-theme', 'theme/ultra');
+    document.body.classList.remove('k4-light'); document.body.classList.add('k4-dark');
+  }
+
   function saveSettings() {
     const payload = { general, appearance, editor, zones };
     writeJSON(SETTINGS_PATH, payload);
@@ -335,6 +346,7 @@
   </div>
 
   <footer class="k4-panel-footer">
+    <Button variant="tertiary" onclick={resetToDefaults}>Reset</Button>
     <Button variant="tertiary" onclick={onclose}>Cancel</Button>
     <Button variant="primary" onclick={saveSettings}>Save</Button>
   </footer>

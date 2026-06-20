@@ -1,22 +1,21 @@
 {
   "general": {
     "autoSave": true,
-    "hardwareAccel": true,
     "showFps": false,
     "smoothZoom": true,
     "theme": "ultra"
   },
   "appearance": {
-    "primaryColor": "#e53e3e",
-    "secondaryColor": "#ed64a6",
-    "bgColor": "#fff5f5",
+    "primaryColor": "#583cdc",
+    "secondaryColor": "#00b4ff",
+    "bgColor": "#050508",
     "bgImage": "",
     "glassMorphism": false,
     "glassBlur": 12,
-    "glassOpacity": 0.15,
+    "glassOpacity": 15,
     "accentGlow": true,
-    "textColor": "#1a0000",
-    "dataTheme": ""
+    "textColor": "#ffffff",
+    "dataTheme": "theme/ultra"
   },
   "editor": {
     "snapToGrid": true,
@@ -26,15 +25,71 @@
     "lineNumbers": true,
     "autoComplete": true
   },
-  "extensions": {
-    "allowUnsigned": false,
-    "devMode": true,
-    "sandbox": true,
-    "maxMemory": 256
-  },
-  "debug": {
-    "verboseLogging": false,
-    "showBlockIds": false,
-    "perfMonitor": false
+  "zones": {
+    "header": {
+      "enabled": false,
+      "bgColor": "",
+      "bgImage": "",
+      "bgSize": "cover",
+      "bgPosition": "center",
+      "opacity": 100,
+      "blur": 0,
+      "brightness": 100,
+      "borderRadius": 0,
+      "boxShadow": "",
+      "height": 0
+    },
+    "workspace": {
+      "enabled": false,
+      "bgColor": "",
+      "bgImage": "",
+      "bgSize": "cover",
+      "bgPosition": "center",
+      "opacity": 100,
+      "blur": 0,
+      "brightness": 100,
+      "borderRadius": 0,
+      "boxShadow": "",
+      "height": 0
+    },
+    "sidebar": {
+      "enabled": false,
+      "bgColor": "",
+      "bgImage": "",
+      "bgSize": "cover",
+      "bgPosition": "center",
+      "opacity": 100,
+      "blur": 0,
+      "brightness": 100,
+      "borderRadius": 0,
+      "boxShadow": "",
+      "height": 0
+    },
+    "stage": {
+      "enabled": false,
+      "bgColor": "",
+      "bgImage": "",
+      "bgSize": "cover",
+      "bgPosition": "center",
+      "opacity": 100,
+      "blur": 0,
+      "brightness": 100,
+      "borderRadius": 0,
+      "boxShadow": "",
+      "height": 0
+    },
+    "blockly_bg": {
+      "enabled": false,
+      "bgColor": "",
+      "bgImage": "",
+      "bgSize": "cover",
+      "bgPosition": "center",
+      "opacity": 100,
+      "blur": 0,
+      "brightness": 100,
+      "borderRadius": 0,
+      "boxShadow": "",
+      "height": 0
+    }
   }
 }

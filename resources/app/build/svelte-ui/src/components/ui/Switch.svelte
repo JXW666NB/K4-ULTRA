@@ -12,6 +12,8 @@
   } = $props();
 
   let isOn = $state(checked);
+  // Sync with parent bind:checked changes
+  $effect(() => { isOn = checked; });
 
   function toggle() {
     if (disabled) return;
