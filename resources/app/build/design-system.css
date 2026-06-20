@@ -265,21 +265,7 @@ html {
   color: rgba(255, 255, 255, 0.9);
 }
 
-/* Header toolbar text 鈥?file name, menu labels */
-body[data-theme="theme/ultra"] [class*="header_left"] span,
-body[data-theme="theme/ultra"] [class*="header_left"] div,
-body[data-theme="theme/ultra"] [class*="header_center"] span,
-body[data-theme="theme/ultra"] [class*="header_center"] div,
-body[data-theme="theme/ultra"] [class*="header_right"] span,
-body[data-theme="theme/ultra"] [class*="header_right"] div {
-  color: rgba(255, 255, 255, 0.85);
-}
-
-/* Help menu button in header */
-body[data-theme="theme/ultra"] #header-help-btn,
-body[data-theme="theme/ultra"] #header-setting-btn {
-  color: rgba(255, 255, 255, 0.7) !important;
-}
+/* Header toolbar: keep native colors, no override */
 
 /* Footer area text */
 [class*="footer"] {

@@ -250,10 +250,10 @@
         </select>
       </div>
 
-      <!-- Native sync indicator -->
+      <!-- Changes save to k4-settings.json + localStorage.editor_settings -->
       <div style="margin-top:12px;padding:10px 14px;background:var(--oc-gray-850);border-radius:8px;font-size:12px;color:var(--oc-white-50);line-height:1.6;">
-        <span style="color:var(--oc-primary-500);font-weight:600;">↻</span>
-        {t('general.synced')}: autoSave, theme
+        <span style="color:var(--oc-success-600);font-weight:600;">↻</span>
+        {t('general.persist_note')}
       </div>
     </section>
 

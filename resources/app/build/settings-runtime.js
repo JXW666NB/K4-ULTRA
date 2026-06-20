@@ -49,10 +49,14 @@
     css += '.k4-fab:hover{box-shadow:0 6px 28px '+rgba(p,0.5)+'!important;}';
     css += '*:focus-visible{outline-color:'+p+'!important;}';
     css += '.k4-scope [class*="btn"][class*="primary"],.k4-scope [class*="btn"][class*="positive"],.k4-scope button[class*="confirm"]{background:linear-gradient(135deg,'+p+','+rgba(p,0.7)+')!important;box-shadow:0 4px 14px '+rgba(p,0.3)+'!important;color:#fff!important;}';
+css += '.k4-scope [class*="btn"][class*="secondary"]{background:'+s+'!important;color:#fff!important;}';
+css += 'progress::-webkit-progress-value,[class*="progress"]::-webkit-progress-value{background:linear-gradient(90deg,'+p+','+s+')!important;}';
+css += '.k4-scope a,.k4-scope [class*="link"]{color:'+s+';}';
     css += '.k4-scope input:focus,.k4-scope textarea:focus,.k4-scope select:focus{border-color:'+p+'!important;box-shadow:0 0 0 3px '+rgba(p,0.1)+'!important;}';
     css += '[class*="spinner"],[class*="loading"]{border-top-color:'+p+'!important;}';
     css += '.k4-scope input,.k4-scope textarea,.k4-scope [contenteditable]{caret-color:'+p+'!important;}';
-    injectCSS(css);
+    if(a.bgImage){var ov=document.getElementById('k4-bg-image-overlay');if(!ov){ov=document.createElement('div');ov.id='k4-bg-image-overlay';ov.style.cssText='position:fixed;inset:0;z-index:-1;pointer-events:none;';document.body.appendChild(ov)}ov.style.backgroundImage='url('+a.bgImage+')';ov.style.backgroundSize='cover';ov.style.backgroundPosition='center'}
+injectCSS(css);
     console.log('[K4] Appearance applied:', JSON.stringify({p:p,bg:bg}));
   }
 
