@@ -26,19 +26,86 @@
   function injectCSS(css) { ensureStyleEl().textContent = css; }
   function setProp(name, value) { document.documentElement.style.setProperty(name, value); if (document.body) document.body.style.setProperty(name, value); }
 
+
+  // Generate full theme-color palette from primary color (mimics native HSL system)
+  function generateHSLThemePalette(r, g, b) {
+    // Convert RGB to HSL
+    r /= 255; g /= 255; b /= 255;
+    var max = Math.max(r, g, b), min = Math.min(r, g, b);
+    var h = 0, s = 0, l = (max + min) / 2;
+    if (max !== min) {
+      var d = max - min;
+      s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+      switch (max) {
+        case r: h = ((g - b) / d + (g < b ? 6 : 0)) / 6; break;
+        case g: h = ((b - r) / d + 2) / 6; break;
+        case b: h = ((r - g) / d + 4) / 6; break;
+      }
+    }
+    var hue = Math.round(h * 360);
+    var sat = Math.round(s * 100);
+    // Generate shades 0-10 (light to dark) and n1, n2 (darker)
+    var shades = [
+      { key: '--theme-color-0',  l: Math.min(100, l * 100 + 20) },
+      { key: '--theme-color-1',  l: Math.min(100, l * 100 + 16) },
+      { key: '--theme-color-2',  l: Math.min(100, l * 100 + 12) },
+      { key: '--theme-color-3',  l: Math.min(100, l * 100 + 8) },
+      { key: '--theme-color-4',  l: Math.min(100, l * 100 + 4) },
+      { key: '--theme-color-5',  l: l * 100 },
+      { key: '--theme-color-6',  l: Math.max(0, l * 100 - 4) },
+      { key: '--theme-color-7',  l: Math.max(0, l * 100 - 8) },
+      { key: '--theme-color-8',  l: Math.max(0, l * 100 - 12) },
+      { key: '--theme-color-9',  l: Math.max(0, l * 100 - 16) },
+      { key: '--theme-color-10', l: Math.max(0, l * 100 - 20) },
+      { key: '--theme-color-n1', l: Math.max(0, l * 100 - 30) },
+      { key: '--theme-color-n2', l: Math.max(0, l * 100 - 45) },
+    ];
+    for (var i = 0; i < shades.length; i++) {
+      var sl = shades[i];
+      setProp(sl.key, hslToRgbString(hue, sat, sl.l));
+    }
+    setProp('--theme-color-s1-0', hslToRgbString(hue, sat, l * 100 + 10));
+    setProp('--theme-color-s1-1', hslToRgbString(hue, sat, l * 100));
+    setProp('--theme-color-s1-2', hslToRgbString(hue, sat, Math.max(0, l * 100 - 15)));
+    setProp('--theme-color-t', '255,255,255');
+    setProp('--theme-color-t1', '200,204,210');
+    setProp('--theme-color-t3', '155,160,170');
+    setProp('--theme-color-t5', '110,115,125');
+    setProp('--theme-color-t7', '73,78,92');
+  }
+
+  function hslToRgbString(h, s, l) {
+    s /= 100; l /= 100;
+    var a = s * Math.min(l, 1 - l);
+    var f = function(n) {
+      var k = (n + h / 30) % 12;
+      return l - a * Math.max(-1, Math.min(k - 3, Math.min(9 - k, 1)));
+    };
+    return Math.round(f(0) * 255) + ',' + Math.round(f(8) * 255) + ',' + Math.round(f(4) * 255);
+  }
+
   function applyAppearance(a) {
     a = a || {};
     if (a.primaryColor) {
       setProp('--k4-primary', a.primaryColor);
       var rgb = hexToRgbString(a.primaryColor);
       setProp('--k4-primary-rgb', rgb);
-      // Skip theme-color override when native preset is active (CSS handles it)
+      // Generate full theme-color palette from primary (mimics native HSL system)
       var dt = document.body ? document.body.getAttribute('data-theme') : '';
       if (!dt || dt === 'theme/ultra') {
-        setProp('--theme-color-0', rgb); setProp('--theme-color-s1-0', rgb); setProp('--theme-color-s1-1', rgb);
+        // Use simple RGB darkening for custom colors
+        setProp('--theme-color-0', rgb);
+        setProp('--theme-color-s1-0', rgb);
+        setProp('--theme-color-s1-1', rgb);
         var c = hexToRgb(a.primaryColor);
         setProp('--theme-color-n1', Math.max(0,c.r-40)+','+Math.max(0,c.g-40)+','+Math.max(0,c.b-40));
         setProp('--theme-color-n2', Math.max(0,c.r-80)+','+Math.max(0,c.g-80)+','+Math.max(0,c.b-80));
+      } else {
+        // Native preset: generate full HSL-based palette from primary
+        // The original kitten.js uses HSL[0]=hue, [1]=saturation%, [2]=lightness%
+        // We approximate from hex using the same logic
+        var pc = hexToRgb(a.primaryColor);
+        generateHSLThemePalette(pc.r, pc.g, pc.b);
       }
     }
     if (a.secondaryColor) setProp('--k4-secondary', a.secondaryColor);
