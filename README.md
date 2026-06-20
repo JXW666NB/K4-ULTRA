@@ -1,6 +1,6 @@
 # K4 Ultra
 
-基于 [编程猫 Kitten4](https://kitten4.codemao.cn) 源码编辑器的深度定制版本，面向专业游戏开发场景。
+基于 [编程猫 Kitten4](https://kitten4.codemao.cn) <a href="https://kitten4.codemao.cn" target="_blank">编程猫 Kitten4(新标签页打开)</a> 源码编辑器的深度定制版本，面向专业游戏开发场景。
 
 ## 特性
 
