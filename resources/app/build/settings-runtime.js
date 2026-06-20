@@ -1,7 +1,7 @@
 /**
  * K4 Ultra Settings Runtime Bridge
- * Reads k4-settings.json and applies to DOM/CSS/Bridge in real-time.
- * --- Fixed: deduplicated, body[data-theme] now controlled by appearance, not loading theme.
+ * Reads k4-settings.json and applies to DOM/CSS in real-time.
+ * v2: Removed dead Redux bridge, all settings now persist via localStorage.editor_settings.
  */
 (function () {
   'use strict';
@@ -56,88 +56,40 @@
     var h = hsl.h, s = hsl.s, l = hsl.l;
     var css = '';
 
-    // Primary shade scale 0-10 + n1/n2 (13 vars)
     var shadeDefs = [
-      { key: '--theme-color-0',  dl: 20 },
-      { key: '--theme-color-1',  dl: 16 },
-      { key: '--theme-color-2',  dl: 12 },
-      { key: '--theme-color-3',  dl: 8 },
-      { key: '--theme-color-4',  dl: 4 },
-      { key: '--theme-color-5',  dl: 0 },
-      { key: '--theme-color-6',  dl: -4 },
-      { key: '--theme-color-7',  dl: -8 },
-      { key: '--theme-color-8',  dl: -12 },
-      { key: '--theme-color-9',  dl: -16 },
-      { key: '--theme-color-10', dl: -20 },
-      { key: '--theme-color-n1', dl: -30 },
+      { key: '--theme-color-0',  dl: 20 },{ key: '--theme-color-1',  dl: 16 },
+      { key: '--theme-color-2',  dl: 12 },{ key: '--theme-color-3',  dl: 8 },
+      { key: '--theme-color-4',  dl: 4 }, { key: '--theme-color-5',  dl: 0 },
+      { key: '--theme-color-6',  dl: -4 },{ key: '--theme-color-7',  dl: -8 },
+      { key: '--theme-color-8',  dl: -12 },{ key: '--theme-color-9',  dl: -16 },
+      { key: '--theme-color-10', dl: -20 },{ key: '--theme-color-n1', dl: -30 },
       { key: '--theme-color-n2', dl: -45 },
     ];
     for (var i = 0; i < shadeDefs.length; i++) {
       var sd = shadeDefs[i];
-      var nl = Math.max(0, Math.min(100, l + sd.dl));
-      css += sd.key + ':' + hslToRgbString(h, s, nl) + ';';
+      css += sd.key + ':' + hslToRgbString(h, s, Math.max(0, Math.min(100, l + sd.dl))) + ';';
     }
-
-    // Primary accent s1-0/1/2 (3 vars)
     css += '--theme-color-s1-0:' + hslToRgbString(h, s, Math.min(100, l + 10)) + ';';
     css += '--theme-color-s1-1:' + hslToRgbString(h, s, l) + ';';
     css += '--theme-color-s1-2:' + hslToRgbString(h, s, Math.max(0, l - 15)) + ';';
-
-    // Success green s2-0/1/2 – hue shifted 120deg from primary (3 vars)
     var gh = (h + 120) % 360;
     css += '--theme-color-s2-0:' + hslToRgbString(gh, Math.min(100, s + 10), Math.min(100, l + 8)) + ';';
     css += '--theme-color-s2-1:' + hslToRgbString(gh, s, l) + ';';
     css += '--theme-color-s2-2:' + hslToRgbString(gh, s, Math.max(0, l - 12)) + ';';
-
-    // Accent warm c/c1/c2 – complementary hue + 30deg offset (3 vars)
     var ah = (h + 180 + 30) % 360;
     css += '--theme-color-c:'  + hslToRgbString(ah, Math.min(100, s + 20), Math.min(100, l + 5)) + ';';
     css += '--theme-color-c1:' + hslToRgbString(ah, s, l) + ';';
     css += '--theme-color-c2:' + hslToRgbString(ah, s, Math.max(0, l - 10)) + ';';
-
-    // Text colors t/t1/t3/t5/t7 – adaptive to dark/light mode (5 vars)
     if (isDark) {
-      css += '--theme-color-t:255,255,255;';
-      css += '--theme-color-t1:200,204,210;';
-      css += '--theme-color-t3:155,160,170;';
-      css += '--theme-color-t5:110,115,125;';
-      css += '--theme-color-t7:73,78,92;';
+      css += '--theme-color-t:255,255,255;--theme-color-t1:200,204,210;--theme-color-t3:155,160,170;--theme-color-t5:110,115,125;--theme-color-t7:73,78,92;';
     } else {
-      css += '--theme-color-t:30,30,35;';
-      css += '--theme-color-t1:60,60,70;';
-      css += '--theme-color-t3:90,90,100;';
-      css += '--theme-color-t5:120,120,130;';
-      css += '--theme-color-t7:150,150,160;';
+      css += '--theme-color-t:30,30,35;--theme-color-t1:60,60,70;--theme-color-t3:90,90,100;--theme-color-t5:120,120,130;--theme-color-t7:150,150,160;';
     }
-
-    // Neutral grey scale 0-100 (11 vars)
     if (isDark) {
-      css += '--theme-color-grey-0:255,255,255;';
-      css += '--theme-color-grey-10:235,235,240;';
-      css += '--theme-color-grey-20:210,210,218;';
-      css += '--theme-color-grey-30:185,185,192;';
-      css += '--theme-color-grey-40:160,160,168;';
-      css += '--theme-color-grey-50:135,135,143;';
-      css += '--theme-color-grey-60:110,110,118;';
-      css += '--theme-color-grey-70:85,85,93;';
-      css += '--theme-color-grey-80:60,60,68;';
-      css += '--theme-color-grey-90:40,40,48;';
-      css += '--theme-color-grey-100:25,25,33;';
+      css += '--theme-color-grey-0:255,255,255;--theme-color-grey-10:235,235,240;--theme-color-grey-20:210,210,218;--theme-color-grey-30:185,185,192;--theme-color-grey-40:160,160,168;--theme-color-grey-50:135,135,143;--theme-color-grey-60:110,110,118;--theme-color-grey-70:85,85,93;--theme-color-grey-80:60,60,68;--theme-color-grey-90:40,40,48;--theme-color-grey-100:25,25,33;';
     } else {
-      css += '--theme-color-grey-0:25,25,33;';
-      css += '--theme-color-grey-10:55,55,65;';
-      css += '--theme-color-grey-20:85,85,95;';
-      css += '--theme-color-grey-30:115,115,125;';
-      css += '--theme-color-grey-40:145,145,155;';
-      css += '--theme-color-grey-50:175,175,182;';
-      css += '--theme-color-grey-60:195,195,200;';
-      css += '--theme-color-grey-70:215,215,218;';
-      css += '--theme-color-grey-80:235,235,238;';
-      css += '--theme-color-grey-90:245,245,247;';
-      css += '--theme-color-grey-100:255,255,255;';
+      css += '--theme-color-grey-0:25,25,33;--theme-color-grey-10:55,55,65;--theme-color-grey-20:85,85,95;--theme-color-grey-30:115,115,125;--theme-color-grey-40:145,145,155;--theme-color-grey-50:175,175,182;--theme-color-grey-60:195,195,200;--theme-color-grey-70:215,215,218;--theme-color-grey-80:235,235,238;--theme-color-grey-90:245,245,247;--theme-color-grey-100:255,255,255;';
     }
-
-    // Yellow-theme specific fallbacks (7 vars)
     css += '--theme-color-ys1:' + (isDark ? '255,255,255' : '25,25,33') + ';';
     css += '--theme-color-ys2:' + hslToRgbString(h, s, Math.min(100, l + 15)) + ';';
     css += '--theme-color-yt3:' + (isDark ? '200,204,210' : '90,90,100') + ';';
@@ -146,11 +98,9 @@
     css += '--theme-color-y10:255,255,255;';
     css += '--theme-color-a1:' + (isDark ? '220,220,225' : '60,60,70') + ';';
     css += '--theme-color-grey-y20:' + (isDark ? '200,200,205' : '90,90,100') + ';';
-
     return css;
   }
 
-  // Inject palette via inline style (highest specificity)
   function applyPaletteToStyle(css) {
     var pairs = css.split(';');
     var root = document.documentElement.style;
@@ -159,39 +109,41 @@
       if (!p) continue;
       var colon = p.indexOf(':');
       if (colon < 1) continue;
-      var key = p.substring(0, colon).trim();
-      var val = p.substring(colon + 1).trim();
-      root.setProperty(key, val);
+      root.setProperty(p.substring(0, colon).trim(), p.substring(colon + 1).trim());
     }
-    var el = document.getElementById('k4-theme-palette');
-    if (el) el.textContent = '';
   }
 
-  // Clear ALL inline theme-color-* overrides from :root (so kitten.css / design-system.css can win)
   function clearInlinePalette() {
     var root = document.documentElement.style;
     var themeProps = [];
     for (var i = 0; i < root.length; i++) {
-      var prop = root[i];
-      if (prop.indexOf('--theme-color') === 0) themeProps.push(prop);
+      if (root[i].indexOf('--theme-color') === 0) themeProps.push(root[i]);
     }
-    for (var j = 0; j < themeProps.length; j++) {
-      root.removeProperty(themeProps[j]);
-    }
+    for (var j = 0; j < themeProps.length; j++) { root.removeProperty(themeProps[j]); }
     var pel = document.getElementById('k4-theme-palette');
     if (pel) pel.textContent = '';
     console.log('[K4] Cleared ' + themeProps.length + ' inline theme-color overrides');
   }
 
-  // Set data-theme on body for appearance theme
   function applyThemeToBody(theme) {
     if (!theme || !document.body) return;
     document.body.setAttribute('data-theme', 'theme/' + theme);
   }
-  // Direct attribute set (for dataTheme values that include 'theme/' prefix)
   function setBodyDataTheme(dataTheme) {
     if (!dataTheme || !document.body) return;
     document.body.setAttribute('data-theme', dataTheme);
+  }
+
+  // ═══ Native settings bridge (localStorage.editor_settings) ═══
+  function readNativeSettings() {
+    try { return JSON.parse(localStorage.getItem('editor_settings') || '{}'); } catch(_) { return {}; }
+  }
+  function writeNativeSettings(updates) {
+    try {
+      var n = readNativeSettings();
+      for (var k in updates) { if (updates.hasOwnProperty(k)) n[k] = updates[k]; }
+      localStorage.setItem('editor_settings', JSON.stringify(n));
+    } catch(_) {}
   }
 
   function applyAppearance(a) {
@@ -200,7 +152,6 @@
     var s = a.secondaryColor || '#00b4ff';
     var bg = a.bgColor || '#050508';
 
-    // Set convenience --k4-* vars (used by Svelte UI / FAB)
     var root = document.documentElement.style;
     root.setProperty('--k4-primary', p);
     root.setProperty('--k4-primary-rgb', hexToRgbString(p));
@@ -208,26 +159,20 @@
     if (a.bgColor) { root.setProperty('--k4-bg', a.bgColor); root.setProperty('--k4-bg-rgb', hexToRgbString(a.bgColor)); }
     if (a.textColor) root.setProperty('--k4-text', a.textColor);
 
-    // Determine if we're using a native preset (kitten.css handles the palette)
-    // Priority: appearance.dataTheme > body[data-theme]
     var dt = a.dataTheme || (document.body ? document.body.getAttribute('data-theme') : '');
     var isNative = dt && dt !== 'theme/ultra' && dt.startsWith('theme/');
 
     if (!isNative && a.primaryColor) {
-      // Custom/ultra/dynamic: generate FULL palette from primary color
       var bgRgb = hexToRgb(a.bgColor || '#050508');
       var brightness = (bgRgb.r * 299 + bgRgb.g * 587 + bgRgb.b * 114) / 1000;
-      var isDark = brightness <= 128;
-      var paletteCSS = generateFullPaletteCSS(p, isDark);
+      var paletteCSS = generateFullPaletteCSS(p, brightness <= 128);
       applyPaletteToStyle(paletteCSS);
-      console.log('[K4] Dynamic palette generated (' + (isDark ? 'dark' : 'light') + ' mode)');
+      console.log('[K4] Dynamic palette generated (' + (brightness <= 128 ? 'dark' : 'light') + ' mode)');
     } else if (isNative) {
-      // Native preset: clear our inline palette so kitten.css selectors win
       clearInlinePalette();
-      console.log('[K4] Native preset active – palette delegated to kitten.css');
+      console.log('[K4] Native preset active - palette delegated to kitten.css');
     }
 
-    // ═══ Runtime injected CSS (non-palette: backgrounds, effects, etc.) ═══
     var css = 'body,#root,html{background-color:' + bg + '!important;}';
     if (a.textColor) css += 'body,.k4-scope{color:' + a.textColor + ';}';
     if (a.glassMorphism) {
@@ -248,9 +193,6 @@
     css += '.k4-scope input:focus,.k4-scope textarea:focus,.k4-scope select:focus{border-color:' + p + '!important;box-shadow:0 0 0 3px ' + rgba(p, 0.1) + '!important;}';
     css += '[class*="spinner"],[class*="loading"]{border-top-color:' + p + '!important;}';
     css += '.k4-scope input,.k4-scope textarea,.k4-scope [contenteditable]{caret-color:' + p + '!important;}';
-
-    // ─── Force header / menubar / nav background ───
-    // React may render header with inline style; override aggressively
     css += '[class*="header"],[class*="Header"],[class*="menubar"],[class*="menu-bar"],[class*="nav"][class*="bar"],[id*="header"]{background-color:' + bg + '!important;}';
 
     if (a.bgImage) {
@@ -266,10 +208,8 @@
       ov.style.backgroundPosition = 'center';
     }
 
-    // Inject into dedicated style element (separate from palette)
     ensureStyleEl('k4-appearance-css').textContent = css;
 
-    // Auto-detect dark/light mode from bgColor
     var bgRgb2 = hexToRgb(a.bgColor || '#050508');
     var brightness2 = (bgRgb2.r * 299 + bgRgb2.g * 587 + bgRgb2.b * 114) / 1000;
     if (document.body) {
@@ -277,75 +217,142 @@
       document.body.classList.add(brightness2 > 128 ? 'k4-light' : 'k4-dark');
     }
 
-    // ─── Set body[data-theme] to match appearance ───
-    // This is the KEY fix: data-theme now reflects appearance, NOT loading theme
     if (a.dataTheme) {
       setBodyDataTheme(a.dataTheme);
     } else if (!isNative && a.primaryColor) {
-      // Custom color via palette: use 'theme/ultra' so design-system.css base is set
-      // (our inline palette overrides the specific vars)
       setBodyDataTheme('theme/ultra');
     }
 
-    // Schedule Blockly grid theme update (after Blockly workspace is ready)
     setTimeout(function() { applyBlocklyTheme(); }, 1000);
-
     console.log('[K4] Appearance applied:', JSON.stringify({ p: p, bg: bg, native: isNative, dataTheme: a.dataTheme || 'dynamic' }));
   }
 
   function applyGeneral(g) {
     g = g || {};
-    var bus = window.__k4bus;
-    if (bus && g.autoSave !== undefined) bus.emit('redux-dispatch', {type:'SETTINGS_UPDATE',payload:{autoSave:g.autoSave}});
-    if (bus && g.smoothZoom !== undefined) bus.emit('redux-dispatch', {type:'SETTINGS_UPDATE',payload:{smoothZoom:g.smoothZoom}});
-    if (bus && g.theme) bus.emit('redux-dispatch', {type:'THEME_CHANGE',payload:{theme:g.theme}});
+    // Write to native editor_settings for persistence across restart
+    var n = {};
+    if (g.autoSave !== undefined) n.autoSave = g.autoSave;
+    if (g.smoothZoom !== undefined) n.smoothZoom = g.smoothZoom;
+    if (g.theme !== undefined) n.theme = g.theme;
+    writeNativeSettings(n);
     if (g.showFps !== undefined) toggleFPS(g.showFps);
-    syncToNative(g);
-    // NOTE: do NOT call applyThemeToBody(g.theme) here!
-    // g.theme is the LOADING screen theme (ultra/matrix/minimal/kitten).
-    // body[data-theme] is now controlled by applyAppearance (appearance.dataTheme).
+    // body[data-theme] is controlled by applyAppearance, NOT here
   }
 
-  function toggleFPS(show) { var ex = document.getElementById('k4-fps-counter'); if (show) { if (ex) { ex.style.display='block'; return; } if (!document.body) return; var f = document.createElement('div'); f.id='k4-fps-counter'; f.style.cssText='position:fixed;top:4px;right:8px;z-index:99999;background:rgba(0,0,0,0.7);color:#0f0;font:12px monospace;padding:2px 6px;border-radius:3px;pointer-events:none;'; document.body.appendChild(f); var fr=0,lt=performance.now(); function tick(){fr++;var now=performance.now();if(now-lt>=1000){f.textContent='FPS: '+fr;fr=0;lt=now;}requestAnimationFrame(tick);} requestAnimationFrame(tick); } else if (ex) { ex.style.display='none'; } }
+  function toggleFPS(show) {
+    var ex = document.getElementById('k4-fps-counter');
+    if (show) {
+      if (ex) { ex.style.display='block'; return; }
+      if (!document.body) return;
+      var f = document.createElement('div'); f.id='k4-fps-counter';
+      f.style.cssText='position:fixed;top:4px;right:8px;z-index:99999;background:rgba(0,0,0,0.7);color:#0f0;font:12px monospace;padding:2px 6px;border-radius:3px;pointer-events:none;';
+      document.body.appendChild(f);
+      var fr=0,lt=performance.now();
+      function tick(){fr++;var now=performance.now();if(now-lt>=1000){f.textContent='FPS: '+fr;fr=0;lt=now;}requestAnimationFrame(tick);}
+      requestAnimationFrame(tick);
+    } else if (ex) { ex.style.display='none'; }
+  }
 
-  function applyEditor(e) { e = e || {}; var bus = window.__k4bus; if (e.fontSize !== undefined) { document.documentElement.style.setProperty('--k4-font-size', e.fontSize+'px'); document.documentElement.style.fontSize = e.fontSize+'px'; } if (bus) { var pl={}; if (e.fontSize!==undefined) pl.fontSize=e.fontSize; if (e.snapToGrid!==undefined) pl.snapToGrid=e.snapToGrid; if (e.showCategoryIcons!==undefined) pl.showCategoryIcons=e.showCategoryIcons; if (e.compactMode!==undefined) pl.compactMode=e.compactMode; if (e.lineNumbers!==undefined) pl.lineNumbers=e.lineNumbers; if (e.autoComplete!==undefined) pl.autoComplete=e.autoComplete; if (Object.keys(pl).length>0) bus.emit('redux-dispatch',{type:'SETTINGS_UPDATE',payload:pl}); } else { window.__k4_deferredEditorSettings = e; } }
+  function applyEditor(e) {
+    e = e || {};
+    if (e.fontSize !== undefined) {
+      document.documentElement.style.setProperty('--k4-font-size', e.fontSize+'px');
+      document.documentElement.style.fontSize = e.fontSize+'px';
+    }
+    // Persist to native format (applied on next load)
+    var n = {};
+    if (e.fontSize !== undefined) n.fontSize = e.fontSize;
+    if (e.snapToGrid !== undefined) n.snapToGrid = e.snapToGrid;
+    if (e.showCategoryIcons !== undefined) n.showCategoryIcons = e.showCategoryIcons;
+    if (e.compactMode !== undefined) n.compactMode = e.compactMode;
+    if (e.lineNumbers !== undefined) n.lineNumbers = e.lineNumbers;
+    if (e.autoComplete !== undefined) n.autoComplete = e.autoComplete;
+    writeNativeSettings(n);
+  }
 
-  function applyDebug(d) { d = d || {}; window.__k4_debug = window.__k4_debug || {}; if (d.verboseLogging !== undefined) window.__k4_debug.verbose = d.verboseLogging; if (d.perfMonitor !== undefined) window.__k4_debug.perf = d.perfMonitor; if (d.showBlockIds !== undefined) { var bus = window.__k4bus; if (bus) bus.emit('redux-dispatch', {type:'SETTINGS_UPDATE',payload:{showBlockIds:d.showBlockIds}}); } }
+  function applyDebug(d) {
+    d = d || {};
+    window.__k4_debug = window.__k4_debug || {};
+    if (d.verboseLogging !== undefined) window.__k4_debug.verbose = d.verboseLogging;
+    if (d.perfMonitor !== undefined) window.__k4_debug.perf = d.perfMonitor;
+    if (d.showBlockIds !== undefined) {
+      writeNativeSettings({ showBlockIds: d.showBlockIds });
+    }
+  }
 
-  function applyAll() { var s = readJSON(SETTINGS_PATH, {}); if (!s || Object.keys(s).length===0) return; if (s.appearance) applyAppearance(s.appearance); if (s.general) applyGeneral(s.general); if (s.editor) applyEditor(s.editor); if (s.debug) applyDebug(s.debug); }
+  function applyAll() {
+    var s = readJSON(SETTINGS_PATH, {});
+    if (!s || Object.keys(s).length === 0) return;
+    if (s.appearance) applyAppearance(s.appearance);
+    if (s.general) applyGeneral(s.general);
+    if (s.editor) applyEditor(s.editor);
+    if (s.debug) applyDebug(s.debug);
+  }
 
-  function waitForBridge(cb) { var a=0; function chk(){a++;if(window.__k4bus&&window.__k4bus.emit){cb();return;}if(a<150)setTimeout(chk,200);} setTimeout(chk,500); }
+  function waitForBridge(cb) {
+    var a=0;
+    function chk(){a++;if(window.__k4bus&&window.__k4bus.emit){cb();return;}if(a<150)setTimeout(chk,200);}
+    setTimeout(chk,500);
+  }
 
-  // Bridge localStorage.editor_settings (native format) with k4-settings.json
-  function syncToNative(g) { try { var n={}; try{n=JSON.parse(localStorage.getItem('editor_settings')||'{}');}catch(_){} if(g.autoSave!==undefined)n.autoSave=g.autoSave; if(g.theme!==undefined)n.theme=g.theme; localStorage.setItem('editor_settings',JSON.stringify(n)); } catch(_){} }
-  function loadFromNative() { try { var n=JSON.parse(localStorage.getItem('editor_settings')||'{}'); if(Object.keys(n).length===0)return null; var s=readJSON(SETTINGS_PATH,{}),ch=false; if(!s.general){s.general={};ch=true;} if(n.autoSave!==undefined&&s.general.autoSave===undefined){s.general.autoSave=n.autoSave;ch=true;} if(n.theme!==undefined&&!s.general.theme){s.general.theme=n.theme;ch=true;} if(ch){writeJSON(SETTINGS_PATH,s);console.log('[K4] Imported native settings:',n);} return s; } catch(_){return null;} }
-
-  // Hook native #header-setting-btn -> open K4 Ultra Settings
   function integrateNativeHeader() {
     var ha=0;
-    function hk(){ var btn=document.getElementById('header-setting-btn'); if(btn&&!btn.__k4_hooked){btn.__k4_hooked=true;btn.addEventListener('click',function(e){e.preventDefault();e.stopPropagation();if(window.__k4bus)window.__k4bus.emit('open-settings');});console.log('[K4] Native #header-setting-btn: click=K4Ultra');} if(!document.getElementById('header-setting-btn')&&ha<100){ha++;setTimeout(hk,300);} }
+    function hk(){
+      var btn=document.getElementById('header-setting-btn');
+      if(btn&&!btn.__k4_hooked){
+        btn.__k4_hooked=true;
+        btn.addEventListener('click',function(e){
+          e.preventDefault();e.stopPropagation();
+          if(window.__k4bus)window.__k4bus.emit('open-settings');
+        });
+        console.log('[K4] Native #header-setting-btn hooked');
+      }
+      if(!document.getElementById('header-setting-btn')&&ha<100){ha++;setTimeout(hk,300);}
+    }
     setTimeout(hk,2000);
   }
 
-  window.K4Settings = { read: function(){return readJSON(SETTINGS_PATH,{});}, write: function(d){writeJSON(SETTINGS_PATH,d);}, apply: applyAll, applyAppearance: applyAppearance, applyGeneral: applyGeneral, applyEditor: applyEditor, applyDebug: applyDebug };
+  window.K4Settings = {
+    read: function(){return readJSON(SETTINGS_PATH,{});},
+    write: function(d){writeJSON(SETTINGS_PATH,d);},
+    apply: applyAll,
+    applyAppearance: applyAppearance,
+    applyGeneral: applyGeneral,
+    applyEditor: applyEditor,
+    applyDebug: applyDebug
+  };
 
-  // ─── Startup: apply saved settings ───
-  loadFromNative();
+  // ─── Startup ───
+  // Import from native localStorage -> k4-settings.json
+  try {
+    var ns = readNativeSettings();
+    if (Object.keys(ns).length > 0) {
+      var s = readJSON(SETTINGS_PATH, {});
+      var ch = false;
+      if (!s.general) { s.general = {}; ch = true; }
+      if (ns.autoSave !== undefined && s.general.autoSave === undefined) { s.general.autoSave = ns.autoSave; ch = true; }
+      if (ns.theme !== undefined && !s.general.theme) { s.general.theme = ns.theme; ch = true; }
+      if (!s.editor) { s.editor = {}; ch = true; }
+      if (ns.fontSize !== undefined && s.editor.fontSize === undefined) { s.editor.fontSize = ns.fontSize; ch = true; }
+      if (ch) { writeJSON(SETTINGS_PATH, s); console.log('[K4] Imported native settings:', ns); }
+    }
+  } catch(e) {}
+
+  // Apply saved settings
   try {
     var s = readJSON(SETTINGS_PATH, {});
-    // Order matters: applyAppearance now sets body[data-theme] correctly
     if (s.appearance) applyAppearance(s.appearance);
-    // applyGeneral does NOT set body[data-theme] (that's the loading theme, not appearance)
     if (s.general) applyGeneral(s.general);
-  } catch (e) {}
+    if (s.editor) applyEditor(s.editor);
+  } catch(e) {}
+
   waitForBridge(function () {
     var s = readJSON(SETTINGS_PATH, {});
-    if (s.editor) applyEditor(s.editor);
     if (s.debug) applyDebug(s.debug);
     integrateNativeHeader();
   });
 
-  // Apply theme colors to Blockly workspace grid
+  // Blockly grid theming
   function applyBlocklyTheme() {
     try {
       var bw = window.Blockly;
@@ -361,5 +368,5 @@
     } catch(e) {}
   }
 
-  console.log('[K4 Settings] Runtime bridge initialized (fixed)');
+  console.log('[K4 Settings] Runtime bridge v2 initialized');
 })();

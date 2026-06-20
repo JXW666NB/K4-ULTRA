@@ -1,7 +1,6 @@
 {
   "general": {
     "autoSave": true,
-    "hardwareAccel": true,
     "showFps": false,
     "smoothZoom": true,
     "theme": "ultra"
@@ -25,16 +24,5 @@
     "fontSize": 14,
     "lineNumbers": true,
     "autoComplete": true
-  },
-  "extensions": {
-    "allowUnsigned": false,
-    "devMode": true,
-    "sandbox": true,
-    "maxMemory": 256
-  },
-  "debug": {
-    "verboseLogging": false,
-    "showBlockIds": false,
-    "perfMonitor": false
   }
 }

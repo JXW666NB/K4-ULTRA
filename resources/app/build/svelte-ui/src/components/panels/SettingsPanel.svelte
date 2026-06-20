@@ -6,26 +6,20 @@
   import { locale as localeStore, t, setLocale, LOCALES } from '../../stores/i18n';
 
   let { onclose = () => {} }: { onclose?: () => void } = $props();
-
-  // i18n: locale reactivity
   let _lang = $state('zh-CN');
 
-// ─── 预设主题 ───
+  // ─── 预设主题 ───
   const PRESETS = [
-    // ─── 原版 Kitten4 内置主题 ───
     { name: '🍊 默认', primary: '#ff7829', secondary: '#ff9e47', bg: '#050508', text: '#ffffff', dark: true, dataTheme: 'theme/orange' },
     { name: '🔵 天空蓝', primary: '#297eff', secondary: '#4790ff', bg: '#0a0a18', text: '#e0e8ff', dark: true, dataTheme: 'theme/blue' },
     { name: '🟡 阳光黄', primary: '#ffdb29', secondary: '#ffe047', bg: '#0f0a00', text: '#2a2000', dark: true, dataTheme: 'theme/yellow' },
     { name: '🟣 紫罗兰', primary: '#9429ff', secondary: '#a347ff', bg: '#0a001a', text: '#e8d0ff', dark: true, dataTheme: 'theme/violet' },
     { name: '🟢 翡翠绿', primary: '#1eb86c', secondary: '#28c777', bg: '#020f08', text: '#d0ffe8', dark: true, dataTheme: 'theme/green' },
     { name: '🌸 樱花粉', primary: '#ff2970', secondary: '#ff4785', bg: '#0f0008', text: '#ffd0e0', dark: true, dataTheme: 'theme/pink' },
-    // ─── K4 Ultra 扩展预设 ───
     { name: 'Ultra 紫', primary: '#583cdc', secondary: '#00b4ff', bg: '#050508', text: '#ffffff', dark: true, dataTheme: 'theme/ultra' },
-    { name: '暗夜黑', primary: '#aaaaaa', secondary: '#666666', bg: '#000000', text: '#cccccc', dark: true, dataTheme: 'theme/ultra' },
     { name: '赛博绿', primary: '#00ff88', secondary: '#00ccff', bg: '#051208', text: '#d0ffe0', dark: true, dataTheme: 'theme/ultra' },
     { name: '极简白', primary: '#333333', secondary: '#888888', bg: '#f0f0f5', text: '#1a1a1a', dark: false, dataTheme: '' },
     { name: '纸张', primary: '#2c5282', secondary: '#718096', bg: '#fefefe', text: '#1a202c', dark: false, dataTheme: '' },
-    { name: '樱花', primary: '#e53e3e', secondary: '#ed64a6', bg: '#fff5f5', text: '#1a0000', dark: false, dataTheme: '' },
   ];
 
   function applyPreset(p: typeof PRESETS[0]) {
@@ -34,7 +28,6 @@
     appearance.bgColor = p.bg;
     appearance.textColor = p.text;
     appearance.dataTheme = p.dataTheme || '';
-    // Apply data-theme for original Kitten4 theme compatibility
     if (p.dataTheme) {
       document.body.setAttribute('data-theme', p.dataTheme);
     } else {
@@ -51,7 +44,6 @@
 
   let selectedPreset = $state('');
 
-  // Restore preset from saved dataTheme
   $effect(() => {
     if (saved.appearance?.dataTheme) {
       const match = PRESETS.find(p => p.dataTheme === saved.appearance.dataTheme);
@@ -78,9 +70,8 @@
 
   let general = $state({
     autoSave: saved.general?.autoSave ?? true,
-    hardwareAccel: saved.general?.hardwareAccel ?? true,
-    showFps: saved.general?.showFps ?? false,
     smoothZoom: saved.general?.smoothZoom ?? true,
+    showFps: saved.general?.showFps ?? false,
     theme: loadingCfg.activeTheme || 'ultra',
   });
 
@@ -98,28 +89,15 @@
   });
 
   let editor = $state({
+    fontSize: saved.editor?.fontSize ?? 14,
     snapToGrid: saved.editor?.snapToGrid ?? true,
     showCategoryIcons: saved.editor?.showCategoryIcons ?? true,
     compactMode: saved.editor?.compactMode ?? false,
-    fontSize: saved.editor?.fontSize ?? 14,
     lineNumbers: saved.editor?.lineNumbers ?? true,
     autoComplete: saved.editor?.autoComplete ?? true,
   });
 
-  let extensions = $state({
-    allowUnsigned: saved.extensions?.allowUnsigned ?? false,
-    devMode: saved.extensions?.devMode ?? true,
-    sandbox: saved.extensions?.sandbox ?? true,
-    maxMemory: saved.extensions?.maxMemory ?? 256,
-  });
-
-  let debug = $state({
-    verboseLogging: saved.debug?.verboseLogging ?? false,
-    showBlockIds: saved.debug?.showBlockIds ?? false,
-    perfMonitor: saved.debug?.perfMonitor ?? false,
-  });
-
-  // ─── 插件列表 ───
+  // ─── 扩展列表 ───
   let loadedExts = $state<Array<{ id: string; name: string; version?: string; description?: string; enabled: boolean }>>([]);
   let disabledList = $state<string[]>([]);
   let extError = $state<string | null>(null);
@@ -154,7 +132,6 @@
       disabledList = [...disabledList.slice(0, idx), ...disabledList.slice(idx + 1)];
     }
     loadedExts = loadedExts.map(e => e.id === id ? { ...e, enabled: disabledList.indexOf(id) === -1 } : e);
-    // 保存到文件
     try {
       const EXT_DIR = (window as any).__app_dir ? (window as any).__app_dir.replaceAll('\\', '/') + '/extensions' : '';
       const disabledPath = EXT_DIR + '/.disabled.json';
@@ -162,7 +139,6 @@
     } catch(_) {}
   }
 
-  // ─── 关于信息 ───
   let aboutInfo = $state({
     version: 'V0.2',
     author: 'JXW & K4ULTRA Team',
@@ -170,19 +146,16 @@
     group: '967426331',
   });
 
-  // 初始化
   refreshExtensions();
 
   function saveSettings() {
-    const payload = { general, appearance, editor, extensions, debug };
+    const payload = { general, appearance, editor };
     writeJSON(SETTINGS_PATH, payload);
 
-    // Save old theme BEFORE updating loadingCfg
     const oldTheme = loadingCfg.activeTheme;
     loadingCfg.activeTheme = general.theme;
     writeJSON(LOADING_CONFIG, loadingCfg);
 
-    // 实时生效 — 调用 K4Settings runtime bridge
     try {
       const K4S = (window as any).K4Settings;
       if (K4S) {
@@ -190,11 +163,9 @@
         K4S.applyAppearance(appearance);
         K4S.applyGeneral(general);
         K4S.applyEditor(editor);
-        K4S.applyDebug(debug);
       }
     } catch (_) {}
 
-    // If loading theme changed, offer reload
     if (general.theme !== oldTheme) {
       uiStore.notify({ type: 'warning', message: t('general.reload_hint'), duration: 5000 });
       setTimeout(() => {
@@ -218,11 +189,10 @@
   </header>
 
   <div class="k4-panel-body">
-    <!-- APPEARANCE -->
+    <!-- ═══ APPEARANCE ═══ -->
     <section class="k4-section">
-      <h3 class="k4-section-title">{t('section.appearance')}</h3>
+      <h3 class="k4-section-title">🎨 {t('section.appearance')}</h3>
 
-      <!-- Preset selector -->
       <div class="k4-setting-row" style="margin-bottom:14px;">
         <label class="k4-setting-label">{t('appearance.preset')}</label>
         <select class="k4-select" style="min-width:160px;" bind:value={selectedPreset} onchange={(e) => {
@@ -236,7 +206,6 @@
           {/each}
         </select>
       </div>
-
 
       <div class="k4-setting-row">
         <label class="k4-setting-label">{t('appearance.primary')}</label>
@@ -301,14 +270,13 @@
 
     <div class="k4-divider"></div>
 
-    <!-- GENERAL -->
+    <!-- ═══ GENERAL ═══ -->
     <section class="k4-section">
-      <h3 class="k4-section-title">{t('section.general')}</h3>
+      <h3 class="k4-section-title">⚙️ {t('section.general')}</h3>
 
       <Switch label={t('general.autoSave')} bind:checked={general.autoSave} />
-      <Switch label={t('general.hardwareAccel')} bind:checked={general.hardwareAccel} />
-      <Switch label={t('general.showFps')} bind:checked={general.showFps} />
       <Switch label={t('general.smoothZoom')} bind:checked={general.smoothZoom} />
+      <Switch label={t('general.showFps')} bind:checked={general.showFps} />
 
       <div class="k4-setting-row">
         <label class="k4-setting-label">{t('language.label')}</label>
@@ -329,24 +297,16 @@
         </select>
       </div>
 
-      <!-- Changes save to k4-settings.json + localStorage.editor_settings -->
-      <div style="margin-top:12px;padding:10px 14px;background:var(--oc-gray-850);border-radius:8px;font-size:12px;color:var(--oc-white-50);line-height:1.6;">
-        <span style="color:var(--oc-success-600);font-weight:600;">↻</span>
-        {t('general.persist_note')}
+      <div style="margin-top:10px;padding:8px 12px;background:var(--oc-gray-850);border-radius:6px;font-size:11px;color:var(--oc-white-50);line-height:1.5;">
+        ⚠️ {t('general.restart_hint') || '加载主题和部分编辑器设置在重启后生效'}
       </div>
     </section>
 
     <div class="k4-divider"></div>
 
-    <!-- EDITOR -->
+    <!-- ═══ EDITOR ═══ -->
     <section class="k4-section">
-      <h3 class="k4-section-title">{t('section.editor')}</h3>
-
-      <Checkbox label={t('editor.snapToGrid')} bind:checked={editor.snapToGrid} />
-      <Checkbox label={t('editor.categoryIcons')} bind:checked={editor.showCategoryIcons} />
-      <Checkbox label={t('editor.compactMode')} bind:checked={editor.compactMode} />
-      <Checkbox label={t('editor.lineNumbers')} bind:checked={editor.lineNumbers} />
-      <Checkbox label={t('editor.autoComplete')} bind:checked={editor.autoComplete} />
+      <h3 class="k4-section-title">✏️ {t('section.editor')}</h3>
 
       <div class="k4-setting-row">
         <label class="k4-setting-label">{t('editor.fontSize')}</label>
@@ -356,33 +316,27 @@
           <button class="k4-step-btn" onclick={() => editor.fontSize = Math.min(24, editor.fontSize + 1)}>+</button>
         </div>
       </div>
+
+      <Checkbox label={t('editor.snapToGrid')} bind:checked={editor.snapToGrid} />
+      <Checkbox label={t('editor.categoryIcons')} bind:checked={editor.showCategoryIcons} />
+      <Checkbox label={t('editor.compactMode')} bind:checked={editor.compactMode} />
+      <Checkbox label={t('editor.lineNumbers')} bind:checked={editor.lineNumbers} />
+      <Checkbox label={t('editor.autoComplete')} bind:checked={editor.autoComplete} />
+
+      <div style="margin-top:8px;padding:6px 10px;background:var(--oc-gray-850);border-radius:4px;font-size:10px;color:var(--oc-white-40);">
+        ℹ️ {t('editor.persist_hint') || '编辑器设置存入本地，下次启动生效'}
+      </div>
     </section>
 
     <div class="k4-divider"></div>
 
-    <!-- EXTENSIONS -->
+    <!-- ═══ EXTENSIONS ═══ -->
     <section class="k4-section">
-      <h3 class="k4-section-title">{t('section.extensions')}</h3>
+      <h3 class="k4-section-title">🧩 {t('section.extensions')}</h3>
 
-      <Switch label={t('extensions.allowUnsigned')} bind:checked={extensions.allowUnsigned} />
-      <Switch label={t('extensions.devMode')} bind:checked={extensions.devMode} />
-      <Switch label={t('extensions.sandbox')} bind:checked={extensions.sandbox} />
-
-      <div class="k4-setting-row">
-        <label class="k4-setting-label">{t('extensions.maxMemory')}</label>
-        <select class="k4-select" bind:value={extensions.maxMemory}>
-          <option value={64}>64 MB</option>
-          <option value={128}>128 MB</option>
-          <option value={256}>256 MB</option>
-          <option value={512}>512 MB</option>
-        </select>
-      </div>
-
-      <div class="k4-section-header" style="margin-top: 16px;">
+      <div class="k4-section-header" style="margin-bottom: 12px;">
         <span class="k4-step-value">{t('extensions.loaded')}</span>
-        <button class="k4-step-btn" onclick={refreshExtensions} title={t('extensions.refresh')}>
-          ↻
-        </button>
+        <button class="k4-step-btn" onclick={refreshExtensions} title={t('extensions.refresh')}>↻</button>
       </div>
       {#if extError}
         <div class="k4-ext-error">{extError}</div>
@@ -411,24 +365,17 @@
           {/each}
         {/if}
       </div>
+
+      <div style="margin-top:8px;padding:6px 10px;background:var(--oc-gray-850);border-radius:4px;font-size:10px;color:var(--oc-white-40);">
+        ℹ️ {t('extensions.restart_hint') || '启用/禁用扩展后需重启生效'}
+      </div>
     </section>
 
     <div class="k4-divider"></div>
 
-    <!-- DEBUG -->
+    <!-- ═══ ABOUT ═══ -->
     <section class="k4-section">
-      <h3 class="k4-section-title">{t('section.debug')}</h3>
-
-      <Switch label={t('debug.verboseLogging')} bind:checked={debug.verboseLogging} />
-      <Switch label={t('debug.showBlockIds')} bind:checked={debug.showBlockIds} />
-      <Switch label={t('debug.perfMonitor')} bind:checked={debug.perfMonitor} />
-    </section>
-
-    <div class="k4-divider"></div>
-
-    <!-- ABOUT -->
-    <section class="k4-section">
-      <h3 class="k4-section-title">{t('section.about')}</h3>
+      <h3 class="k4-section-title">ℹ️ {t('section.about')}</h3>
       <div class="k4-about-box">
         <div class="k4-about-logo">K4 <span class="k4-about-accent">ULTRA</span></div>
         <div class="k4-about-version">{aboutInfo.version}</div>
@@ -456,25 +403,22 @@
   .k4-panel-close:hover { background: var(--oc-gray-600); color: var(--oc-white-90); }
   .k4-panel-body { flex: 1; overflow-y: auto; padding: 24px; padding-bottom: 8px; }
   .k4-section { margin-bottom: 16px; }
-  .k4-section-title { font-size: var(--oc-text-sm); font-weight: var(--oc-weight-semibold); color: var(--oc-white-70); text-transform: uppercase; letter-spacing: 0.05em; margin: 0 0 12px 0; position: sticky; top: 8px; }
+  .k4-section-title { font-size: var(--oc-text-sm); font-weight: var(--oc-weight-semibold); color: var(--oc-white-70); text-transform: uppercase; letter-spacing: 0.05em; margin: 0 0 12px 0; }
   .k4-setting-row { display: flex; align-items: center; justify-content: space-between; height: 36px; }
   .k4-setting-label { font-size: var(--oc-text-base); font-weight: var(--oc-weight-medium); color: var(--oc-white-80); }
   .k4-divider { height: 1px; background: var(--oc-gray-700); margin: 8px 24px; }
   .k4-divider-sub { height: 1px; background: var(--oc-gray-750); margin: 6px 0; }
 
-  /* Color picker */
   .k4-color-row { display: flex; align-items: center; gap: 10px; }
   .k4-color-pick { width: 32px; height: 28px; border: 1px solid var(--oc-gray-600); border-radius: 6px; background: none; cursor: pointer; padding: 2px; }
   .k4-color-pick::-webkit-color-swatch-wrapper { padding: 0; }
   .k4-color-pick::-webkit-color-swatch { border: none; border-radius: 3px; }
   .k4-color-hex { font-size: 12px; font-family: var(--oc-font-mono, monospace); color: var(--oc-white-50); min-width: 60px; }
 
-  /* Text input */
   .k4-input { height: 32px; background: var(--oc-gray-850); border: 1px solid var(--oc-gray-700); border-radius: 8px; padding: 0 12px; color: var(--oc-white-80); font-size: 13px; font-family: var(--oc-font-inter); outline: none; width: 280px; transition: border-color 0.15s; }
   .k4-input:focus { border-color: var(--oc-primary-600); }
   .k4-input::placeholder { color: var(--oc-gray-400); }
 
-  /* Slider */
   .k4-slider { -webkit-appearance: none; appearance: none; width: 120px; height: 4px; background: var(--oc-gray-700); border-radius: 2px; outline: none; cursor: pointer; }
   .k4-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 14px; height: 14px; border-radius: 50%; background: var(--oc-primary-500); cursor: pointer; border: 2px solid var(--oc-gray-800); }
 
@@ -486,10 +430,8 @@
   .k4-step-value { font-size: var(--oc-text-base); font-weight: var(--oc-weight-medium); color: var(--oc-white-80); min-width: 40px; text-align: center; }
   .k4-panel-footer { display: flex; align-items: center; justify-content: flex-end; gap: 12px; padding: 16px 24px; border-top: 1px solid var(--oc-gray-700); flex-shrink: 0; }
 
-  /* Section header (title + action button) */
   .k4-section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
 
-  /* Extension list */
   .k4-ext-error { color: var(--oc-error-600); font-size: 12px; padding: 8px; background: var(--oc-gray-850); border-radius: 8px; margin-bottom: 8px; }
   .k4-ext-empty { color: var(--oc-white-50); font-size: 13px; text-align: center; padding: 20px 0; }
   .k4-ext-hint { color: var(--oc-white-30); font-size: 11px; margin-top: 8px; text-align: center; }
@@ -503,7 +445,6 @@
   .k4-ext-version { font-size: 11px; color: var(--oc-primary-500); font-family: var(--oc-font-mono); }
   .k4-ext-desc { font-size: 11px; color: var(--oc-white-50); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
-  /* Toggle switch for extensions */
   .k4-ext-toggle { position: relative; display: inline-block; width: 36px; height: 20px; flex-shrink: 0; cursor: pointer; }
   .k4-ext-toggle input { opacity: 0; width: 0; height: 0; }
   .k4-ext-toggle-knob { position: absolute; inset: 0; background: var(--oc-gray-500); border-radius: 10px; transition: background 0.15s; }
@@ -511,7 +452,6 @@
   .k4-ext-toggle input:checked + .k4-ext-toggle-knob { background: var(--oc-primary-600); }
   .k4-ext-toggle input:checked + .k4-ext-toggle-knob::before { transform: translateX(16px); }
 
-  /* About section */
   .k4-about-box { background: var(--oc-gray-850); border-radius: 12px; padding: 20px; text-align: center; }
   .k4-about-logo { font-size: 32px; font-weight: 900; letter-spacing: 2px; color: var(--oc-white-90); }
   .k4-about-accent { background: linear-gradient(135deg, #583cdc, var(--oc-primary-500)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
