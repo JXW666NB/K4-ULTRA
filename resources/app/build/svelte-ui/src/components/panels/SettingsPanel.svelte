@@ -249,6 +249,12 @@
           <option value="kitten">Kitten</option>
         </select>
       </div>
+
+      <!-- Native sync indicator -->
+      <div style="margin-top:12px;padding:10px 14px;background:var(--oc-gray-850);border-radius:8px;font-size:12px;color:var(--oc-white-50);line-height:1.6;">
+        <span style="color:var(--oc-primary-500);font-weight:600;">↻</span>
+        {t('general.synced')}: autoSave, theme
+      </div>
     </section>
 
     <div class="k4-divider"></div>

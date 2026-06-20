@@ -1,3 +1,8 @@
+  // Set data-theme on body for current theme
+  function applyThemeToBody(theme) {
+    if (!theme || !document.body) return;
+    document.body.setAttribute('data-theme', 'theme/' + theme);
+  }
 /**
  * K4 Ultra Settings Runtime Bridge
  * Reads k4-settings.json and applies to DOM/CSS/Bridge in real-time.
@@ -50,7 +55,7 @@
     console.log('[K4] Appearance applied:', JSON.stringify({p:p,bg:bg}));
   }
 
-  function applyGeneral(g) { g = g || {}; var bus = window.__k4bus; if (bus && g.autoSave !== undefined) bus.emit('redux-dispatch', {type:'SETTINGS_UPDATE',payload:{autoSave:g.autoSave}}); if (bus && g.smoothZoom !== undefined) bus.emit('redux-dispatch', {type:'SETTINGS_UPDATE',payload:{smoothZoom:g.smoothZoom}}); if (bus && g.theme) bus.emit('redux-dispatch', {type:'THEME_CHANGE',payload:{theme:g.theme}}); if (g.showFps !== undefined) toggleFPS(g.showFps); syncToNative(g); }
+  function applyGeneral(g) { g = g || {}; var bus = window.__k4bus; if (bus && g.autoSave !== undefined) bus.emit('redux-dispatch', {type:'SETTINGS_UPDATE',payload:{autoSave:g.autoSave}}); if (bus && g.smoothZoom !== undefined) bus.emit('redux-dispatch', {type:'SETTINGS_UPDATE',payload:{smoothZoom:g.smoothZoom}}); if (bus && g.theme) bus.emit('redux-dispatch', {type:'THEME_CHANGE',payload:{theme:g.theme}}); if (g.showFps !== undefined) toggleFPS(g.showFps); syncToNative(g); applyThemeToBody(g.theme); }
 
   function toggleFPS(show) { var ex = document.getElementById('k4-fps-counter'); if (show) { if (ex) { ex.style.display='block'; return; } if (!document.body) return; var f = document.createElement('div'); f.id='k4-fps-counter'; f.style.cssText='position:fixed;top:4px;right:8px;z-index:99999;background:rgba(0,0,0,0.7);color:#0f0;font:12px monospace;padding:2px 6px;border-radius:3px;pointer-events:none;'; document.body.appendChild(f); var fr=0,lt=performance.now(); function tick(){fr++;var now=performance.now();if(now-lt>=1000){f.textContent='FPS: '+fr;fr=0;lt=now;}requestAnimationFrame(tick);} requestAnimationFrame(tick); } else if (ex) { ex.style.display='none'; } }
 
@@ -63,8 +68,8 @@
   function waitForBridge(cb) { var a=0; function chk(){a++;if(window.__k4bus&&window.__k4bus.emit){cb();return;}if(a<150)setTimeout(chk,200);} setTimeout(chk,500); }
 
   // Bridge localStorage.editor_settings (native format) with k4-settings.json
-  function syncToNative(g) { try { var n={}; try{n=JSON.parse(localStorage.getItem('editor_settings')||'{}');}catch(_){} if(g.autoSave!==undefined)n.autoSave=g.autoSave; localStorage.setItem('editor_settings',JSON.stringify(n)); } catch(_){} }
-  function loadFromNative() { try { var n=JSON.parse(localStorage.getItem('editor_settings')||'{}'); if(Object.keys(n).length===0)return null; var s=readJSON(SETTINGS_PATH,{}),ch=false; if(!s.general){s.general={};ch=true;} if(n.autoSave!==undefined&&s.general.autoSave===undefined){s.general.autoSave=n.autoSave;ch=true;} if(ch){writeJSON(SETTINGS_PATH,s);console.log('[K4] Imported native settings');} return s; } catch(_){return null;} }
+  function syncToNative(g) { try { var n={}; try{n=JSON.parse(localStorage.getItem('editor_settings')||'{}');}catch(_){} if(g.autoSave!==undefined)n.autoSave=g.autoSave; if(g.theme!==undefined)n.theme=g.theme; localStorage.setItem('editor_settings',JSON.stringify(n)); } catch(_){} }
+  function loadFromNative() { try { var n=JSON.parse(localStorage.getItem('editor_settings')||'{}'); if(Object.keys(n).length===0)return null; var s=readJSON(SETTINGS_PATH,{}),ch=false; if(!s.general){s.general={};ch=true;} if(n.autoSave!==undefined&&s.general.autoSave===undefined){s.general.autoSave=n.autoSave;ch=true;} if(n.theme!==undefined&&!s.general.theme){s.general.theme=n.theme;ch=true;} if(ch){writeJSON(SETTINGS_PATH,s);console.log('[K4] Imported native settings:',n);} return s; } catch(_){return null;} }
 
   // Hook native #header-setting-btn -> open K4 Ultra Settings
   function integrateNativeHeader() {
@@ -76,7 +81,7 @@
   window.K4Settings = { read: function(){return readJSON(SETTINGS_PATH,{});}, write: function(d){writeJSON(SETTINGS_PATH,d);}, apply: applyAll, applyAppearance: applyAppearance, applyGeneral: applyGeneral, applyEditor: applyEditor, applyDebug: applyDebug };
 
   loadFromNative();
-  try { var s = readJSON(SETTINGS_PATH, {}); if (s.appearance) applyAppearance(s.appearance); } catch (e) {}
+  try { var s = readJSON(SETTINGS_PATH, {}); if (s.appearance) applyAppearance(s.appearance); if (s.general && s.general.theme) applyThemeToBody(s.general.theme); } catch (e) {}
   waitForBridge(function () { var s = readJSON(SETTINGS_PATH, {}); if (s.editor) applyEditor(s.editor); if (s.general) applyGeneral(s.general); if (s.debug) applyDebug(s.debug); integrateNativeHeader(); });
   console.log('[K4 Settings] Runtime bridge initialized');
 })();
