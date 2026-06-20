@@ -30,7 +30,8 @@
     appearance.dataTheme = p.dataTheme || '';
     if (p.dataTheme) { document.body.setAttribute('data-theme', p.dataTheme); }
     else { document.body.removeAttribute('data-theme'); }
-    if (p.dark) { document.body.classList.remove('k4-light'); document.body.classList.add('k4-dark'); }
+    if (p.dark) { debug.verboseLogging = false; debug.showBlockIds = false; debug.perfMonitor = false;
+    document.body.classList.remove('k4-light'); document.body.classList.add('k4-dark'); }
     else { document.body.classList.remove('k4-dark'); document.body.classList.add('k4-light'); }
   }
 
@@ -66,6 +67,7 @@
 
   let general = $state({
     autoSave: saved.general?.autoSave ?? true,
+    hardwareAccel: saved.general?.hardwareAccel ?? true,
     smoothZoom: saved.general?.smoothZoom ?? true,
     showFps: saved.general?.showFps ?? false,
     theme: loadingCfg.activeTheme || 'ultra',
@@ -91,6 +93,12 @@
     compactMode: saved.editor?.compactMode ?? false,
     lineNumbers: saved.editor?.lineNumbers ?? true,
     autoComplete: saved.editor?.autoComplete ?? true,
+  });
+
+  let debug = $state({
+    verboseLogging: saved.debug?.verboseLogging ?? false,
+    showBlockIds: saved.debug?.showBlockIds ?? false,
+    perfMonitor: saved.debug?.perfMonitor ?? false,
   });
 
   // ─── Zone defaults ───
@@ -151,11 +159,12 @@
     zones.header = {...dz}; zones.workspace = {...dz}; zones.sidebar = {...dz}; zones.stage = {...dz}; zones.blockly_bg = {...dz};
     selectedPreset = 'Ultra Purple';
     document.body.setAttribute('data-theme', 'theme/ultra');
+    debug.verboseLogging = false; debug.showBlockIds = false; debug.perfMonitor = false;
     document.body.classList.remove('k4-light'); document.body.classList.add('k4-dark');
   }
 
   function saveSettings() {
-    const payload = { general, appearance, editor, zones };
+    const payload = { general, appearance, editor, zones, debug };
     writeJSON(SETTINGS_PATH, payload);
 
     const oldTheme = loadingCfg.activeTheme;
@@ -170,6 +179,7 @@
         K4S.applyGeneral(general);
         K4S.applyEditor(editor);
         K4S.applyZones(zones);
+        K4S.applyDebug(debug);
       }
     } catch (_) {}
 
@@ -289,6 +299,7 @@
     <section class="k4-section">
       <h3 class="k4-section-title">⚙️ General</h3>
       <Switch label="Auto Save" bind:checked={general.autoSave} />
+      <Switch label="Hardware Acceleration" bind:checked={general.hardwareAccel} />
       <Switch label="Smooth Zoom" bind:checked={general.smoothZoom} />
       <Switch label="Show FPS" bind:checked={general.showFps} />
       <div class="k4-setting-row"><label class="k4-setting-label">Language</label><select class="k4-select" value={_lang} onchange={(e) => setLocale(e.currentTarget.value as any)}>{#each LOCALES as l}<option value={l.code}>{l.label}</option>{/each}</select></div>
@@ -317,6 +328,8 @@
       <h3 class="k4-section-title">🧩 Extensions</h3>
       <div class="k4-section-header" style="margin-bottom:12px;"><span class="k4-step-value">Loaded</span><button class="k4-step-btn" onclick={refreshExtensions} title="Refresh">↻</button></div>
       {#if extError}<div class="k4-ext-error">{extError}</div>{/if}
+            <div class="k4-setting-row"><label class="k4-setting-label">Max Memory</label><select class="k4-select" style="min-width:120px;"><option value={64}>64 MB</option><option value={128}>128 MB</option><option value={256}>256 MB</option><option value={512}>512 MB</option></select></div>
+      <div style="margin-top:8px;"></div>
       <div class="k4-ext-list">
         {#if loadedExts.length === 0}
           <div class="k4-ext-empty">No extensions loaded</div>
@@ -331,6 +344,16 @@
         {/if}
       </div>
       <div style="margin-top:8px;padding:6px 10px;background:var(--oc-gray-850);border-radius:4px;font-size:10px;color:var(--oc-white-40);">ℹ️ Enable/disable requires restart.</div>
+    </section>
+
+    <div class="k4-divider"></div>
+
+    <!-- ═══ DEBUG ═══ -->
+    <section class="k4-section">
+      <h3 class="k4-section-title">🔧 Debug</h3>
+      <Checkbox label="Verbose Logging" bind:checked={debug.verboseLogging} />
+      <Checkbox label="Show Block IDs" bind:checked={debug.showBlockIds} />
+      <Checkbox label="Perf Monitor" bind:checked={debug.perfMonitor} />
     </section>
 
     <div class="k4-divider"></div>
