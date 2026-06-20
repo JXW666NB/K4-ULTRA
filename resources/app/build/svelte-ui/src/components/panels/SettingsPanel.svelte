@@ -49,7 +49,15 @@
     }
   }
 
-  let selectedPreset = $state(saved.appearance?.dataTheme ? (PRESETS.find(p => p.dataTheme === saved.appearance.dataTheme)?.name || '') : '');
+  let selectedPreset = $state('');
+
+  // Restore preset from saved dataTheme
+  $effect(() => {
+    if (saved.appearance?.dataTheme) {
+      const match = PRESETS.find(p => p.dataTheme === saved.appearance.dataTheme);
+      if (match) selectedPreset = match.name;
+    }
+  });
   localeStore.subscribe(v => _lang = v);
 
   const FS = (window as any).FS;
