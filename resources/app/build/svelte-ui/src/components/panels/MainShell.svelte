@@ -13,7 +13,16 @@
 
   let page = $derived($appStore.currentPage);
   let menuOpen = $state(false);
+  let editorReady = $state(false);
   let showWelcome = $state(false);
+
+  // Wait for React editor before showing FAB and overlays
+  // Fallback: show after 8s even if editor never fires ready event
+  var _readyTimer = setTimeout(function () { editorReady = true; }, 8000);
+  (window as any).__k4bus?.on?.('react-mount', function () {
+    clearTimeout(_readyTimer);
+    editorReady = true;
+  });
 
   // ─── Draggable FAB state ──────────────────────────
   let fabEl: HTMLButtonElement;
@@ -81,6 +90,7 @@
 </script>
 
 <!-- Draggable FAB Button -->
+{#if editorReady}
 <button
   bind:this={fabEl}
   class="k4-fab"
@@ -98,6 +108,7 @@
     <line x1="3" y1="18" x2="21" y2="18"/>
   </svg>
 </button>
+{/if}
 
 <!-- Quick Menu -->
 {#if menuOpen}

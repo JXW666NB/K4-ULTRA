@@ -166,7 +166,7 @@
     }
 
     // FAB button
-    css += '.k4-fab { background: ' + p + ' !important; box-shadow: 0 4px 20px ' + rgba(p,0.35) + ' !important; }\n';
+    css += '.k4-fab { background: ' + p + ' !important; color: #fff !important; box-shadow: 0 4px 20px ' + rgba(p,0.35) + ' !important; }\n';
     css += '.k4-fab:hover { box-shadow: 0 6px 28px ' + rgba(p,0.5) + ' !important; }\n';
 
     // Focus ring
@@ -212,7 +212,7 @@
   function toggleFPS(show) {
     var existing = document.getElementById('k4-fps-counter');
     if (show) {
-      if (existing) { existing.style.display = 'block'; return; }
+      if (existing) { existing.style.display = 'block'; if (!document.body) return; return; }
       var fps = document.createElement('div');
       fps.id = 'k4-fps-counter';
       fps.style.cssText = 'position:fixed;top:4px;right:8px;z-index:99999;background:rgba(0,0,0,0.7);color:#0f0;font:12px monospace;padding:2px 6px;border-radius:3px;pointer-events:none;';
