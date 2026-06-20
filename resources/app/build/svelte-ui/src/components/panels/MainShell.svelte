@@ -24,7 +24,7 @@
     editorReady = true;
   });
 
-  // Listen for open-settings from native header button (dblclick)
+  // Listen for open-settings from native header button (click)
   var _cleanupSettingsEvt = (window as any).__k4bus?.on?.('open-settings', function () {
     appStore.setPage('settings');
   });
