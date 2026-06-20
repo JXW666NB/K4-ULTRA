@@ -1,0 +1,29 @@
+# 大文件排除
+*.exe
+*.dll
+*.pak
+*.bin
+*.dat
+*.pak
+*.icudtl.dat
+
+# 备份文件
+*.bak
+*.bak.*
+*.bom_backup
+*备份*.txt
+*备份*.js
+
+# 硬件固件文件
+*.hex
+
+# 调试日志
+debug.log
+
+# Node modules
+node_modules/
+
+# 系统文件
+Thumbs.db
+Desktop.ini
+.DS_Store

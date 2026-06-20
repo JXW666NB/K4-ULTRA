@@ -1,0 +1,55 @@
+<style>
+#kitten-loader-wrap {
+  position: absolute; visibility: visible; width: 100%; height: 100%; top: 0; left: 0; z-index: 99;
+  background: radial-gradient(ellipse at center, #0a0a2e 0%, #02020a 100%);
+  text-align: center; display: flex; justify-content: center; flex-direction: column; align-items: center;
+  transition: all 0.4s ease-in-out; overflow: hidden;
+  font-family: PingFangSC-Semibold, "Microsoft YaHei", sans-serif;
+}
+.kitten-loader-background {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  background-image: linear-gradient(rgba(0,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0,255,255,0.03) 1px, transparent 1px);
+  background-size: 50px 50px; animation: gridMove 20s linear infinite; z-index: 0;
+}
+@keyframes gridMove {
+  0% { transform: perspective(500px) rotateX(60deg) translateY(0); }
+  100% { transform: perspective(500px) rotateX(60deg) translateY(50px); }
+}
+.kitten-loader-scanline { position:absolute; top:0; left:0; width:100%; height:100%; background: linear-gradient(to bottom, transparent 50%, rgba(0,255,255,0.02) 50%); background-size: 100% 4px; pointer-events:none; z-index:1; }
+.kitten-loader-glow { position:absolute; top:50%; left:50%; width:600px; height:600px; transform: translate(-50%, -50%); background: radial-gradient(circle, rgba(0,212,255,0.15) 0%, transparent 70%); animation: pulseGlow 3s ease-in-out infinite; z-index:0; }
+@keyframes pulseGlow { 0%,100%{opacity:0.4;transform:translate(-50%,-50%) scale(1)} 50%{opacity:0.8;transform:translate(-50%,-50%) scale(1.1)} }
+.kitten-loader-container { position:relative; z-index:2; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+.kitten-loader-logo { font-size:72px; font-weight:900; letter-spacing:12px; color:#fff; text-transform:uppercase; text-shadow: 0 0 10px rgba(0,212,255,0.8), 0 0 40px rgba(0,132,255,0.6), 0 0 80px rgba(0,68,255,0.4); animation: flicker 2s infinite alternate; margin-bottom:16px; }
+.kitten-loader-logo span { color:#00d4ff; }
+@keyframes flicker { 0%,18%,22%,25%,53%,57%,100%{text-shadow: 0 0 10px rgba(0,212,255,0.8), 0 0 40px rgba(0,132,255,0.6), 0 0 80px rgba(0,68,255,0.4)} 20%,24%,55%{text-shadow:none} }
+.kitten-loader-subtitle { font-size:14px; color:#00d4ff; letter-spacing:8px; text-transform:uppercase; margin-bottom:48px; opacity:0.8; animation: blink 1.5s ease-in-out infinite; }
+@keyframes blink { 0%,100%{opacity:0.4} 50%{opacity:1} }
+.progress-bar-area { width:360px; height:6px; background:rgba(255,255,255,0.08); border-radius:3px; overflow:hidden; position:relative; box-shadow: 0 0 10px rgba(0,212,255,0.2); }
+.progress-bar-area::after { content:''; position:absolute; top:0; left:0; height:100%; width:40%; background: linear-gradient(90deg, #00d4ff, #0084ff, #00d4ff); background-size: 200% 100%; border-radius:3px; animation: progressFlow 1.5s ease-in-out infinite, shimmer 2s linear infinite; box-shadow: 0 0 20px rgba(0,212,255,0.6); }
+@keyframes progressFlow { 0%{left:-40%} 100%{left:100%} }
+@keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+#kitten-loader-wrap .text { margin-top:20px; font-size:14px; color:rgba(255,255,255,0.7); letter-spacing:2px; line-height:20px; text-align:center; }
+#offline-text { box-sizing:border-box; width:100px; height:36px; padding:8px 14px 10px; text-align:center; margin:0 auto; margin-top:24px; border:1px solid rgba(0,212,255,0.5); border-radius:6px; font-size:14px; color:#00d4ff; background:rgba(0,212,255,0.05); transition: all 0.2s; }
+#offline-text:hover { color:#fff; background:rgba(0,212,255,0.2); border-color:#00d4ff; cursor:pointer; box-shadow: 0 0 15px rgba(0,212,255,0.4); }
+.kitten-loader-corner { position:absolute; width:40px; height:40px; border:2px solid rgba(0,212,255,0.3); z-index:2; }
+.kitten-loader-corner.tl { top:30px; left:30px; border-right:none; border-bottom:none; }
+.kitten-loader-corner.tr { top:30px; right:30px; border-left:none; border-bottom:none; }
+.kitten-loader-corner.bl { bottom:30px; left:30px; border-right:none; border-top:none; }
+.kitten-loader-corner.br { bottom:30px; right:30px; border-left:none; border-top:none; }
+</style>
+<div class="kitten-loader-background"></div>
+<div class="kitten-loader-scanline"></div>
+<div class="kitten-loader-glow"></div>
+<div class="kitten-loader-corner tl"></div>
+<div class="kitten-loader-corner tr"></div>
+<div class="kitten-loader-corner bl"></div>
+<div class="kitten-loader-corner br"></div>
+<div class="kitten-loader-container">
+  <div class="kitten-loader-logo">K4 <span>ULTRA</span></div>
+  <div class="kitten-loader-subtitle">System Initializing</div>
+  <div class="progress-bar-area"></div>
+  <div class="text" id="text">
+    <div id="loading-text"></div>
+    <div id="offline-text" onclick="switch_mode()"></div>
+  </div>
+</div>

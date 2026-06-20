@@ -1,0 +1,20 @@
+{"frames": {
+
+  "wood_banner_loading.png":
+  {
+    "frame": {"x":0,"y":0,"w":18,"h":18},
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": {"x":0,"y":0,"w":18,"h":18},
+    "sourceSize": {"w":18,"h":18}
+  }},
+  "meta": {
+    "app": "https://www.codeandweb.com/texturepacker",
+    "version": "1.0",
+    "image": "wood_loading-1576674019217.png",
+    "format": "RGBA8888",
+    "size": {"w":18,"h":18},
+    "scale": "1",
+    "smartupdate": "$TexturePacker:SmartUpdate:c97ff1feb89b63c07de3dff3f43cf98f:c0374a438584dd10bd4756aec6e3eadc:2f1b6375f985eb127e27f3d305a878a6$"
+  }
+  }

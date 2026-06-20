@@ -1,0 +1,59 @@
+[
+  {
+    "type": "hello_world",
+    "message0": "Hello World!",
+    "args0": [],
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": "%{BKY_SENSING_HUE}",
+    "inputsInline": true,
+    "tooltip": "显示 Hello World 弹窗"
+  },
+  {
+    "type": "hello_greet",
+    "message0": "向 %1 问好",
+    "args0": [
+      {
+        "type": "input_value",
+        "name": "NAME",
+        "check": "String"
+      }
+    ],
+    "output": "String",
+    "colour": "%{BKY_SENSING_HUE}",
+    "inputsInline": true,
+    "tooltip": "返回问候语"
+  },
+  {
+    "type": "hello_alert",
+    "message0": "弹窗提示 %1",
+    "args0": [
+      {
+        "type": "input_value",
+        "name": "TEXT",
+        "check": "String"
+      }
+    ],
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": "%{BKY_EVENTS_HUE}",
+    "inputsInline": true,
+    "tooltip": "弹出提示框"
+  },
+  {
+    "type": "hello_delete",
+    "message0": "删除文件 %1",
+    "args0": [
+      {
+        "type": "input_value",
+        "name": "PATH",
+        "check": "String"
+      }
+    ],
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": "%{BKY_CONTROL_HUE}",
+    "inputsInline": true,
+    "tooltip": "安全沙盒演示 - 会弹窗询问权限"
+  }
+]

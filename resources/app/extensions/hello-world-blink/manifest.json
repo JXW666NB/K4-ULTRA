@@ -1,0 +1,17 @@
+{
+  "name": "hello-world-blink",
+  "version": "1.0.0",
+  "description": "Blink 格式示例扩展 - 演示 Hello World 积木",
+  "author": "K4 Ultra Team",
+  "blink": { "version": "1", "min_engine": "4.0" },
+  "category": {
+    "name": "Hello Blink",
+    "color": "#E35BFF",
+    "icon": "sensing"
+  },
+  "entries": {
+    "blocks": "blocks.json",
+    "runtime": "runtime.js",
+    "generator": "generator.js"
+  }
+}
