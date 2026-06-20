@@ -40,8 +40,9 @@
     if (a.bgColor) { setProp('--k4-bg', a.bgColor); setProp('--k4-bg-rgb', hexToRgbString(a.bgColor)); }
     if (a.textColor) setProp('--k4-text', a.textColor);
 
-    var p = a.primaryColor || '#583cdc', bg = a.bgColor || '#050508';
+    var p = a.primaryColor || '#583cdc', s = a.secondaryColor || '#00b4ff', bg = a.bgColor || '#050508';
     var css = 'body,#root,html{background-color:'+bg+'!important;}';
+    if (a.textColor) css += 'body,.k4-scope{color:'+a.textColor+';}';
     if (a.glassMorphism) { var gBlur = a.glassBlur||12, gOpacity = a.glassOpacity||0.15, bgRgb = a.bgColor?hexToRgbString(a.bgColor):'5,5,8'; css += '.k4-scope [class*="modal"],.k4-scope [class*="dialog"],[class*="sidebar"],[class*="panel"]{backdrop-filter:blur('+gBlur+'px);-webkit-backdrop-filter:blur('+gBlur+'px);background:rgba('+bgRgb+','+gOpacity+')!important;}'; }
     if (a.accentGlow && a.primaryColor) css += '.kitten-loader-logo{text-shadow:0 0 20px '+rgba(p,0.6)+',0 0 60px '+rgba(p,0.3)+',0 0 120px '+rgba(p,0.15)+'!important;}';
     css += '.k4-fab{background:'+p+'!important;color:#fff!important;box-shadow:0 4px 20px '+rgba(p,0.35)+'!important;}';
