@@ -31,10 +31,15 @@
     if (a.primaryColor) {
       setProp('--k4-primary', a.primaryColor);
       var rgb = hexToRgbString(a.primaryColor);
-      setProp('--k4-primary-rgb', rgb); setProp('--theme-color-0', rgb); setProp('--theme-color-s1-0', rgb); setProp('--theme-color-s1-1', rgb);
-      var c = hexToRgb(a.primaryColor);
-      setProp('--theme-color-n1', Math.max(0,c.r-40)+','+Math.max(0,c.g-40)+','+Math.max(0,c.b-40));
-      setProp('--theme-color-n2', Math.max(0,c.r-80)+','+Math.max(0,c.g-80)+','+Math.max(0,c.b-80));
+      setProp('--k4-primary-rgb', rgb);
+      // Skip theme-color override when native preset is active (CSS handles it)
+      var dt = document.body ? document.body.getAttribute('data-theme') : '';
+      if (!dt || dt === 'theme/ultra') {
+        setProp('--theme-color-0', rgb); setProp('--theme-color-s1-0', rgb); setProp('--theme-color-s1-1', rgb);
+        var c = hexToRgb(a.primaryColor);
+        setProp('--theme-color-n1', Math.max(0,c.r-40)+','+Math.max(0,c.g-40)+','+Math.max(0,c.b-40));
+        setProp('--theme-color-n2', Math.max(0,c.r-80)+','+Math.max(0,c.g-80)+','+Math.max(0,c.b-80));
+      }
     }
     if (a.secondaryColor) setProp('--k4-secondary', a.secondaryColor);
     if (a.bgColor) { setProp('--k4-bg', a.bgColor); setProp('--k4-bg-rgb', hexToRgbString(a.bgColor)); }
