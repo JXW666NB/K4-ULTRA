@@ -7,15 +7,15 @@
     "theme": "ultra"
   },
   "appearance": {
-    "primaryColor": "#583cdc",
-    "secondaryColor": "#00b4ff",
-    "bgColor": "#050508",
+    "primaryColor": "#333333",
+    "secondaryColor": "#888888",
+    "bgColor": "#f0f0f5",
     "bgImage": "",
     "glassMorphism": false,
     "glassBlur": 12,
     "glassOpacity": 0.15,
     "accentGlow": true,
-    "textColor": "#ffffff"
+    "textColor": "#1a1a1a"
   },
   "editor": {
     "snapToGrid": true,

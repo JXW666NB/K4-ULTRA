@@ -12,14 +12,20 @@
 
 // ─── 预设主题 ───
   const PRESETS = [
-    { name: 'Ultra 紫', primary: '#583cdc', secondary: '#00b4ff', bg: '#050508', text: '#ffffff', dark: true },
-    { name: 'Ultra 蓝', primary: '#1967ff', secondary: '#00d4aa', bg: '#0a0a14', text: '#e8e8f0', dark: true },
-    { name: '暗夜黑', primary: '#aaaaaa', secondary: '#666666', bg: '#000000', text: '#cccccc', dark: true },
-    { name: '赛博绿', primary: '#00ff88', secondary: '#00ccff', bg: '#051208', text: '#d0ffe0', dark: true },
-    { name: '暖橙', primary: '#ff6b35', secondary: '#ffc107', bg: '#1a0f08', text: '#ffe8d0', dark: true },
-    { name: '极简白', primary: '#333333', secondary: '#888888', bg: '#f0f0f5', text: '#1a1a1a', dark: false },
-    { name: '纸张', primary: '#2c5282', secondary: '#718096', bg: '#fefefe', text: '#1a202c', dark: false },
-    { name: '樱花', primary: '#e53e3e', secondary: '#ed64a6', bg: '#fff5f5', text: '#1a0000', dark: false },
+    // ─── 原版 Kitten4 内置主题 ───
+    { name: '🍊 默认', primary: '#ff7829', secondary: '#ff9e47', bg: '#050508', text: '#ffffff', dark: true, dataTheme: 'theme/orange' },
+    { name: '🔵 天空蓝', primary: '#297eff', secondary: '#4790ff', bg: '#0a0a18', text: '#e0e8ff', dark: true, dataTheme: 'theme/blue' },
+    { name: '🟡 阳光黄', primary: '#ffdb29', secondary: '#ffe047', bg: '#0f0a00', text: '#2a2000', dark: true, dataTheme: 'theme/yellow' },
+    { name: '🟣 紫罗兰', primary: '#9429ff', secondary: '#a347ff', bg: '#0a001a', text: '#e8d0ff', dark: true, dataTheme: 'theme/violet' },
+    { name: '🟢 翡翠绿', primary: '#1eb86c', secondary: '#28c777', bg: '#020f08', text: '#d0ffe8', dark: true, dataTheme: 'theme/green' },
+    { name: '🌸 樱花粉', primary: '#ff2970', secondary: '#ff4785', bg: '#0f0008', text: '#ffd0e0', dark: true, dataTheme: 'theme/pink' },
+    // ─── K4 Ultra 扩展预设 ───
+    { name: 'Ultra 紫', primary: '#583cdc', secondary: '#00b4ff', bg: '#050508', text: '#ffffff', dark: true, dataTheme: 'theme/ultra' },
+    { name: '暗夜黑', primary: '#aaaaaa', secondary: '#666666', bg: '#000000', text: '#cccccc', dark: true, dataTheme: 'theme/ultra' },
+    { name: '赛博绿', primary: '#00ff88', secondary: '#00ccff', bg: '#051208', text: '#d0ffe0', dark: true, dataTheme: 'theme/ultra' },
+    { name: '极简白', primary: '#333333', secondary: '#888888', bg: '#f0f0f5', text: '#1a1a1a', dark: false, dataTheme: '' },
+    { name: '纸张', primary: '#2c5282', secondary: '#718096', bg: '#fefefe', text: '#1a202c', dark: false, dataTheme: '' },
+    { name: '樱花', primary: '#e53e3e', secondary: '#ed64a6', bg: '#fff5f5', text: '#1a0000', dark: false, dataTheme: '' },
   ];
 
   function applyPreset(p: typeof PRESETS[0]) {
@@ -27,6 +33,12 @@
     appearance.secondaryColor = p.secondary;
     appearance.bgColor = p.bg;
     appearance.textColor = p.text;
+    // Apply data-theme for original Kitten4 theme compatibility
+    if (p.dataTheme) {
+      document.body.setAttribute('data-theme', p.dataTheme);
+    } else {
+      document.body.removeAttribute('data-theme');
+    }
     if (p.dark) {
       document.body.classList.remove('k4-light');
       document.body.classList.add('k4-dark');
