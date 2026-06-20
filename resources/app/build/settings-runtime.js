@@ -69,7 +69,7 @@
   // Hook native #header-setting-btn -> open K4 Ultra Settings
   function integrateNativeHeader() {
     var ha=0;
-    function hk(){ var btn=document.getElementById('header-setting-btn'); if(btn&&!btn.__k4_hooked){btn.__k4_hooked=true;btn.addEventListener('click',function(e){e.preventDefault();e.stopPropagation();if(window.__k4bus)window.__k4bus.emit('open-settings');});console.log('[K4] Hooked native #header-setting-btn');} if(!document.getElementById('header-setting-btn')&&ha<100){ha++;setTimeout(hk,300);} }
+    function hk(){ var btn=document.getElementById('header-setting-btn'); if(btn&&!btn.__k4_hooked){btn.__k4_hooked=true;btn.addEventListener('dblclick',function(e){e.preventDefault();e.stopPropagation();if(window.__k4bus)window.__k4bus.emit('open-settings');});console.log('[K4] Native #header-setting-btn: dblclick=K4Ultra');} if(!document.getElementById('header-setting-btn')&&ha<100){ha++;setTimeout(hk,300);} }
     setTimeout(hk,2000);
   }
 
