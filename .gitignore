@@ -39,3 +39,23 @@ desktop.ini
 # Build artifacts (source maps)
 *.map
 
+# General log files
+*.log
+
+# Temp / scratch files
+dev/tmp/
+*.tmp
+
+# Electron packaging output
+dist/
+out/
+release/
+
+# Playwright test artifacts
+test-results/
+playwright-report/
+screenshots/
+
+# Environment
+.env
+.env.local

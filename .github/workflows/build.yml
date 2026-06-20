@@ -1,15 +1,25 @@
-name: Build K4 Ultra
+name: Build & Release K4 Ultra
 
 on:
   push:
-    branches: [main, restructure]
+    branches: [main]
+    tags: ['v*']
   pull_request:
     branches: [main]
   workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version tag (e.g. v2.6.0)'
+        required: false
+        default: ''
 
 jobs:
   build:
     runs-on: windows-latest
+    strategy:
+      matrix:
+        arch: [x64]
+    name: Build Windows (${{ matrix.arch }})
 
     steps:
       - name: Checkout
@@ -25,14 +35,47 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build exe
-        run: node builder/build-exe.js
-        env:
-          NODE_ENV: production
+      - name: Package App
+        run: |
+          npx electron-packager . "K4 Ultra" `
+            --platform=win32 `
+            --arch=${{ matrix.arch }} `
+            --electron-version=36.5.0 `
+            --out=dist `
+            --overwrite `
+            --ignore="node_modules|\\.git|backups|dev|docs|\\.github|compare\\.cjs|ui_check\\.cjs|\\.deepseek|\\.trae|\\.agents|skills-lock\\.json|\\.gitignore|package-lock\\.json|local_screenshot\\.png|online_screenshot\\.png"
+        shell: pwsh
+
+      - name: Create portable zip
+        run: |
+          Compress-Archive -Path "dist/K4 Ultra-win32-${{ matrix.arch }}/*" -DestinationPath "dist/K4-Ultra-Windows-${{ matrix.arch }}.zip"
+        shell: pwsh
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: K4-Ultra-Windows
-          path: dist/
+          name: K4-Ultra-Windows-${{ matrix.arch }}
+          path: dist/K4-Ultra-Windows-${{ matrix.arch }}.zip
           compression-level: 0
+
+  release:
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          merge-multiple: true
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: ${{ github.ref_name }}
+          files: artifacts/*.zip
+          generate_release_notes: true
+          draft: false
+          prerelease: ${{ contains(github.ref_name, 'beta') || contains(github.ref_name, 'alpha') || contains(github.ref_name, 'rc') }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

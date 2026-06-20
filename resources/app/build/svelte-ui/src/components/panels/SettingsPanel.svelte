@@ -36,6 +36,7 @@
   }
 
   let selectedPreset = $state('');
+  let showResetConfirm = $state(false);
   let activeZoneTab = $state('header');
 
   $effect(() => {
@@ -44,7 +45,10 @@
       if (match) selectedPreset = match.name;
     }
   });
-  localeStore.subscribe(v => _lang = v);
+  $effect(() => {
+    const unsub = localeStore.subscribe(v => _lang = v);
+    return unsub;
+  });
 
   const FS = (window as any).FS;
   const APP_DIR = (window as any).__app_dir || '';
@@ -70,7 +74,8 @@
     hardwareAccel: saved.general?.hardwareAccel ?? true,
     smoothZoom: saved.general?.smoothZoom ?? true,
     showFps: saved.general?.showFps ?? false,
-    theme: loadingCfg.activeTheme || 'ultra',
+    theme: saved.general?.theme || loadingCfg.activeTheme || 'ultra',
+    maxMemory: saved.general?.maxMemory ?? 256,
   });
 
   let appearance = $state({
@@ -80,7 +85,7 @@
     bgImage: saved.appearance?.bgImage ?? '',
     glassMorphism: saved.appearance?.glassMorphism ?? false,
     glassBlur: saved.appearance?.glassBlur ?? 12,
-    glassOpacity: saved.appearance?.glassOpacity ?? 0.15,
+    glassOpacity: saved.appearance?.glassOpacity ?? 15,
     accentGlow: saved.appearance?.accentGlow ?? true,
     textColor: saved.appearance?.textColor ?? '#ffffff',
     dataTheme: saved.appearance?.dataTheme ?? '',
@@ -153,6 +158,7 @@
 
   function resetToDefaults() {
     general.autoSave = true; general.smoothZoom = true; general.showFps = false; general.theme = 'ultra';
+    general.maxMemory = 256;
     appearance.primaryColor = '#583cdc'; appearance.secondaryColor = '#00b4ff'; appearance.bgColor = '#050508'; appearance.bgImage = ''; appearance.glassMorphism = false; appearance.glassBlur = 12; appearance.glassOpacity = 15; appearance.accentGlow = true; appearance.textColor = '#ffffff'; appearance.dataTheme = 'theme/ultra';
     editor.fontSize = 14; editor.snapToGrid = true; editor.showCategoryIcons = true; editor.compactMode = false; editor.lineNumbers = true; editor.autoComplete = true;
     var dz = defaultZone();
@@ -202,8 +208,17 @@
   </header>
 
   <div class="k4-panel-body">
-    <!-- ═══ APPEARANCE ═══ -->
-    <section class="k4-section">
+    <!-- <nav class="k4-quick-nav">
+      <a href="#sec-appearance">🎨</a>
+      <a href="#sec-zones">🖼</a>
+      <a href="#sec-general">⚙</a>
+      <a href="#sec-editor">✏</a>
+      <a href="#sec-extensions">🧩</a>
+      <a href="#sec-debug">🔧</a>
+      <a href="#sec-about">ℹ</a>
+    </nav>
+    ═══ APPEARANCE ═══ -->
+    <section class="k4-section" id="sec-appearance">
       <h3 class="k4-section-title">🎨 Appearance</h3>
       <div class="k4-setting-row" style="margin-bottom:14px;">
         <label class="k4-setting-label">Preset</label>
@@ -302,7 +317,7 @@
       <Switch label="Hardware Acceleration" bind:checked={general.hardwareAccel} />
       <Switch label="Smooth Zoom" bind:checked={general.smoothZoom} />
       <Switch label="Show FPS" bind:checked={general.showFps} />
-      <div class="k4-setting-row"><label class="k4-setting-label">Language</label><select class="k4-select" value={_lang} onchange={(e) => setLocale(e.currentTarget.value as any)}>{#each LOCALES as l}<option value={l.code}>{l.label}</option>{/each}</select></div>
+      <div class="k4-setting-row"><label class="k4-setting-label">Language</label><select class="k4-select" value={_lang} onchange={(e) => { const v = (e.target as HTMLSelectElement).value; setLocale(v as any); }}>{#each LOCALES as l}<option value={l.code}>{l.label}</option>{/each}</select></div>
       <div class="k4-setting-row"><label class="k4-setting-label">Loading Theme</label><select class="k4-select" bind:value={general.theme}><option value="ultra">Ultra</option><option value="matrix">Matrix</option><option value="minimal">Minimal</option><option value="kitten">Kitten</option></select></div>
       <div style="margin-top:10px;padding:8px 12px;background:var(--oc-gray-850);border-radius:6px;font-size:11px;color:var(--oc-white-50);line-height:1.5;">⚠️ Loading theme and some editor settings require restart.</div>
     </section>
@@ -324,11 +339,11 @@
     <div class="k4-divider"></div>
 
     <!-- ═══ EXTENSIONS ═══ -->
-    <section class="k4-section">
+    <section class="k4-section" id="sec-extensions">
       <h3 class="k4-section-title">🧩 Extensions</h3>
       <div class="k4-section-header" style="margin-bottom:12px;"><span class="k4-step-value">Loaded</span><button class="k4-step-btn" onclick={refreshExtensions} title="Refresh">↻</button></div>
       {#if extError}<div class="k4-ext-error">{extError}</div>{/if}
-            <div class="k4-setting-row"><label class="k4-setting-label">Max Memory</label><select class="k4-select" style="min-width:120px;"><option value={64}>64 MB</option><option value={128}>128 MB</option><option value={256}>256 MB</option><option value={512}>512 MB</option></select></div>
+            <div class="k4-setting-row"><label class="k4-setting-label">Max Memory</label><select class="k4-select" style="min-width:120px;" bind:value={general.maxMemory}><option value={64}>64 MB</option><option value={128}>128 MB</option><option value={256}>256 MB</option><option value={512}>512 MB</option></select></div>
       <div style="margin-top:8px;"></div>
       <div class="k4-ext-list">
         {#if loadedExts.length === 0}
@@ -349,7 +364,7 @@
     <div class="k4-divider"></div>
 
     <!-- ═══ DEBUG ═══ -->
-    <section class="k4-section">
+    <section class="k4-section" id="sec-debug">
       <h3 class="k4-section-title">🔧 Debug</h3>
       <Checkbox label="Verbose Logging" bind:checked={debug.verboseLogging} />
       <Checkbox label="Show Block IDs" bind:checked={debug.showBlockIds} />
@@ -371,8 +386,20 @@
     </section>
   </div>
 
+{#if showResetConfirm}
+  <div class="k4-reset-overlay" onclick={() => showResetConfirm = false} role="presentation">
+    <div class="k4-reset-dialog" onclick={(e) => e.stopPropagation()}>
+      <h4>Reset all settings?</h4>
+      <p>This will restore every option to its factory default. This cannot be undone.</p>
+      <div class="k4-reset-actions">
+        <button class="k4-step-btn" style="width:auto;padding:0 16px;" onclick={() => showResetConfirm = false}>Cancel</button>
+        <button class="k4-step-btn" style="width:auto;padding:0 16px;background:var(--oc-error-700);color:#fff;border-color:var(--oc-error-600);" onclick={() => { resetToDefaults(); showResetConfirm = false; }}>Reset</button>
+      </div>
+    </div>
+  </div>
+{/if}
   <footer class="k4-panel-footer">
-    <Button variant="tertiary" onclick={resetToDefaults}>Reset</Button>
+    <Button variant="tertiary" onclick={() => showResetConfirm = true}>Reset</Button>
     <Button variant="tertiary" onclick={onclose}>Cancel</Button>
     <Button variant="primary" onclick={saveSettings}>Save</Button>
   </footer>
@@ -448,4 +475,12 @@
   .k4-about-val{color:var(--oc-white-80);font-weight:500}
   .k4-file-btn{width:32px;height:32px;border:1px solid var(--oc-gray-600);border-radius:6px;background:var(--oc-gray-850);color:var(--oc-white-70);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background 0.15s}
   .k4-file-btn:hover{background:var(--oc-gray-600)}
+  .k4-quick-nav{display:flex;gap:6px;padding:0 0 14px 0;margin-bottom:4px;border-bottom:1px solid var(--oc-gray-700);position:sticky;top:0;background:var(--oc-gray-800);z-index:5;flex-wrap:wrap}
+  .k4-quick-nav a{display:flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:8px;background:var(--oc-gray-850);color:var(--oc-white-50);font-size:16px;text-decoration:none;transition:all 0.15s;cursor:pointer}
+  .k4-quick-nav a:hover{background:var(--oc-gray-700);color:var(--oc-white-80)}
+  .k4-reset-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:200;display:flex;align-items:center;justify-content:center}
+  .k4-reset-dialog{background:var(--oc-gray-800);border:1px solid var(--oc-gray-600);border-radius:12px;padding:24px;max-width:360px;text-align:center}
+  .k4-reset-dialog h4{color:var(--oc-white-90);margin:0 0 8px;font-size:16px}
+  .k4-reset-dialog p{color:var(--oc-white-50);font-size:13px;margin:0 0 16px;line-height:1.5}
+  .k4-reset-dialog .k4-reset-actions{display:flex;gap:10px;justify-content:center}
 </style>
